@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="vi"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="/assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+  <title>Sản phẩm | Admin</title>
+
+  <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+  <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+  <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+
+  <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+  <script th:src="@{/assets/js/config.js}"></script>
+
+  <style>
+    .img-preview{width:120px;height:120px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb;background:#fafafa}
+    .form-hint{font-size:.8rem;color:#6b7280}
+  </style>
+</head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <!-- Sidebar -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+      <div class="app-brand demo">
+        <a href="/admin" class="app-brand-link">
+          <span class="app-brand-logo demo">
+            <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+          </span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+          <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+      </div>
+      <div class="menu-inner-shadow"></div>
+      <ul class="menu-inner py-1">
+        <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+        <li class="menu-item active"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+      </ul>
+    </aside>
+
+    <div class="layout-page">
+      <!-- Navbar -->
+      <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+          <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"><i class="bx bx-menu bx-sm"></i></a>
+        </div>
+        <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+          <div class="navbar-nav align-items-center">
+            <div class="nav-item d-flex align-items-center">
+              <i class="bx bx-search fs-4 lh-0"></i>
+              <input type="text" class="form-control border-0 shadow-none" placeholder="Tìm kiếm sản phẩm..."/>
+            </div>
+          </div>
+          <ul class="navbar-nav flex-row align-items-center ms-auto">
+            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+              <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                <div class="avatar avatar-online"><img th:src="@{/assets/img/avatars/1.png}" alt class="w-px-40 h-auto rounded-circle"/></div>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i><span>Hồ sơ</span></a></li>
+                <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i><span>Cài đặt</span></a></li>
+                <li><div class="dropdown-divider"></div></li>
+                <li><a class="dropdown-item" href="auth-login-basic.html"><i class="bx bx-power-off me-2"></i><span>Đăng xuất</span></a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <!-- /Navbar -->
+
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div>
+              <h4 class="fw-bold mb-1" th:text="${productId} != null ? 'Sửa Sản phẩm' : 'Thêm Sản phẩm'"></h4>
+              <small class="text-muted">Quản lý thông tin sản phẩm & phân loại</small>
+            </div>
+            <a th:href="@{/admin/products}" class="btn btn-outline-secondary">
+              <i class="bx bx-left-arrow-alt me-1"></i>Về danh sách
+            </a>
+          </div>
+
+          <div class="row">
+            <!-- Cột form trái -->
+            <div class="col-lg-7 col-xl-6">
+              <div class="card mb-4">
+                <h5 class="card-header">Thông tin cơ bản</h5>
+                <div class="card-body">
+                  <form id="productForm" th:attr="data-id=${productId}">
+                    <input type="hidden" id="prodId" th:value="${productId}"/>
+
+                    <div class="mb-3">
+                      <label for="prodName" class="form-label">Tên sản phẩm <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="prodName" placeholder="Ví dụ: Táo Envy 1kg" required/>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="prodSlug" class="form-label">Slug</label>
+                      <input type="text" class="form-control" id="prodSlug" placeholder="tao-envy-1kg"/>
+                      <div class="form-hint">Tự sinh từ tên nếu để trống.</div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="prodBrand" class="form-label">Thương hiệu</label>
+                        <input type="text" class="form-control" id="prodBrand" placeholder="VD: Envy"/>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="prodOrigin" class="form-label">Xuất xứ</label>
+                        <input type="text" class="form-control" id="prodOrigin" placeholder="VD: New Zealand"/>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="shortDesc" class="form-label">Mô tả ngắn</label>
+                      <input type="text" class="form-control" id="shortDesc" placeholder="Tối đa vài câu tóm tắt..."/>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="longDesc" class="form-label">Mô tả chi tiết</label>
+                      <textarea id="longDesc" rows="5" class="form-control" placeholder="Mô tả đầy đủ..."></textarea>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                      <input class="form-check-input" type="checkbox" id="prodActive" checked/>
+                      <label class="form-check-label" for="prodActive">Kích hoạt</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bx bx-save me-1"></i> Lưu
+                      </button>
+                      <a th:href="@{/admin/products}" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cột phải: Ảnh, Giá & Tồn, Danh mục -->
+            <div class="col-lg-5 col-xl-4">
+
+              <div class="card mb-4">
+                <h5 class="card-header">Ảnh chính</h5>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label class="form-label">URL ảnh</label>
+                    <input type="text" id="mainImageUrl" class="form-control" placeholder="Sẽ tự điền sau khi upload"/>
+                    <div class="form-text">Chọn tệp, hệ thống sẽ upload và tự điền URL.</div>
+
+                    <label class="form-label mt-3">Tải ảnh từ máy</label>
+                    <input type="file" id="mainImageFile" class="form-control" accept="image/*"/>
+                    <img id="imgPreview" class="img-preview" alt="preview" src="" style="display:none"/>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card mb-4">
+                <h5 class="card-header">Giá & Tồn kho</h5>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="price" class="form-label">Giá bán (VNĐ)</label>
+                      <input type="number" id="basePrice" class="form-control" step="0.01" min="0" placeholder="vd: 129000"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="compareAtPrice" class="form-label">Giá gạch (VNĐ)</label>
+                      <input type="number" id="baseCompareAtPrice" class="form-control" step="0.01" min="0" placeholder="(tuỳ chọn)"/>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="stockQty" class="form-label">Tồn kho</label>
+                    <input type="number" id="baseStockQty" class="form-control" step="1" min="0" value="0" placeholder="0"/>
+                  </div>
+                  <div class="form-hint">Mô hình giá gốc trên sản phẩm — không cần tạo biến thể.</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h5 class="card-header">Phân loại & Danh mục</h5>
+                <div class="card-body">
+                  <div class="mb-3">
+                    <label for="categories" class="form-label">Danh mục (có thể chọn nhiều)</label>
+                    <select id="prodCats" class="form-select" multiple size="8">
+                      <option th:each="c : ${allCategories}"
+                              th:value="${c.id}"
+                              th:text="${c.name}"></option>
+                    </select>
+                    <div class="form-hint">Giữ Ctrl/Cmd để chọn nhiều.</div>
+                  </div>
+                  <a th:href="@{/admin/categories}" class="btn btn-sm btn-outline-secondary">Quản lý danh mục</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+            <div class="mb-2 mb-md-0">© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vendor JS -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+<script>
+(() => {
+  const API = '/api/admin/products';
+  const $ = (id) => document.getElementById(id);
+
+  const prodId       = $('prodId');
+  const prodName     = $('prodName');
+  const prodSlug     = $('prodSlug');
+  const prodBrand    = $('prodBrand');
+  const prodOrigin   = $('prodOrigin');
+  const shortDesc    = $('shortDesc');
+  const longDesc     = $('longDesc');
+  const mainImageUrl = $('mainImageUrl');
+  const imgPreview   = $('imgPreview');
+  const prodActive   = $('prodActive');
+  const form         = $('productForm');
+
+  // ====== GIÁ & TỒN KHO GỐC (id phải đúng với input) ======
+  const basePrice          = $('basePrice');           // number
+  const baseCompareAtPrice = $('baseCompareAtPrice');  // number
+  const baseStockQty       = $('baseStockQty');        // number
+
+  // <select multiple> danh mục
+  const catSelect = $('prodCats');
+
+  // Upload ảnh
+  const mainImageFile = $('mainImageFile');
+
+  // ================== Helpers ==================
+  const slugify = (s) => s.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/đ/g,'d')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)+/g,'');
+
+  prodName?.addEventListener('input', () => {
+    if (!prodSlug.value) prodSlug.value = slugify(prodName.value);
+  });
+
+  function updatePreview() {
+    const url = (mainImageUrl.value || '').trim();
+    if (url) { imgPreview.src = url; imgPreview.style.display = 'inline-block'; }
+    else { imgPreview.removeAttribute('src'); imgPreview.style.display = 'none'; }
+  }
+  mainImageUrl?.addEventListener('input', updatePreview);
+
+  function getSelectedCategoryIds() {
+    if (!catSelect) return [];
+    return [...catSelect.selectedOptions].map(o => Number(o.value));
+  }
+
+  async function uploadImage(file) {
+    const fd = new FormData();
+    fd.append('file', file);
+    const r = await fetch('/api/admin/uploads', { method: 'POST', body: fd });
+    if (!r.ok) throw new Error(await r.text() || 'Upload thất bại');
+    const data = await r.json(); // { url, ... }
+    return data.url;
+  }
+
+  mainImageFile?.addEventListener('change', async () => {
+    const f = mainImageFile.files?.[0];
+    if (!f) return;
+    try {
+      const fr = new FileReader();
+      fr.onload = e => { imgPreview.src = e.target.result; imgPreview.style.display = 'inline-block'; };
+      fr.readAsDataURL(f);
+
+      const url = await uploadImage(f);
+      mainImageUrl.value = url;
+      updatePreview();
+    } catch (e) {
+      alert(e.message || 'Không upload được ảnh');
+      mainImageUrl.value = '';
+      updatePreview();
+    } finally {
+      mainImageFile.value = '';
+    }
+  });
+
+  // Load categories (onlyActive = true để khớp list)
+  async function loadCategories(preselectIds = []) {
+    if (!catSelect) return;
+    try {
+      const res = await fetch('/api/admin/categories/all-min?onlyActive=true');
+      if (!res.ok) throw new Error('Load categories failed');
+      const cats = await res.json();
+      catSelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+      if (Array.isArray(preselectIds) && preselectIds.length) {
+        const set = new Set(preselectIds.map(Number));
+        [...catSelect.options].forEach(opt => opt.selected = set.has(Number(opt.value)));
+      }
+    } catch (e) {
+      console.error(e);
+      catSelect.innerHTML = '<option disabled>Không tải được danh mục</option>';
+    }
+  }
+
+  // ============== Nếu đang SỬA sản phẩm ==============
+  const id = prodId?.value;
+  (async () => {
+    let presetCatIds = [];
+    if (id) {
+      try {
+        const r = await fetch(`${API}/${id}`);
+        if (!r.ok) throw new Error('Không tải được dữ liệu sản phẩm');
+        const p = await r.json();
+
+        prodName.value      = p.name         ?? '';
+        prodSlug.value      = p.slug         ?? '';
+        prodBrand.value     = p.brand        ?? '';
+        prodOrigin.value    = p.origin       ?? '';
+        shortDesc.value     = p.shortDesc    ?? '';
+        longDesc.value      = p.longDesc     ?? '';
+        mainImageUrl.value  = p.mainImageUrl ?? '';
+        prodActive.checked  = !!p.active;
+
+        // --- GIÁ & TỒN KHO GỐC ---
+        basePrice.value          = (p.basePrice != null ? p.basePrice : '');
+        baseCompareAtPrice.value = (p.baseCompareAtPrice != null ? p.baseCompareAtPrice : '');
+        baseStockQty.value       = (p.baseStockQty != null ? p.baseStockQty : 0);
+
+        updatePreview();
+
+        if (Array.isArray(p.categoryIds)) presetCatIds = p.categoryIds;
+      } catch (e) {
+        alert(e.message || 'Không tải được dữ liệu sản phẩm');
+      }
+    }
+    await loadCategories(presetCatIds);
+  })();
+
+  // ============== Submit ==============
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      name:         prodName.value.trim(),
+      slug:         (prodSlug.value.trim() || slugify(prodName.value.trim())),
+      brand:        prodBrand.value.trim()       || null,
+      origin:       prodOrigin.value.trim()      || null,
+      shortDesc:    shortDesc.value.trim()       || null,
+      longDesc:     longDesc.value.trim()        || null,
+      mainImageUrl: mainImageUrl.value.trim()    || null,
+      active:       !!prodActive.checked,
+      categories:   getSelectedCategoryIds().map(id => ({ id })),
+
+      // --- GIÁ & TỒN KHO GỐC gửi lên backend ---
+      basePrice:          basePrice.value ? Number(basePrice.value) : null,
+      baseCompareAtPrice: baseCompareAtPrice.value ? Number(baseCompareAtPrice.value) : null,
+      baseStockQty:       baseStockQty.value ? Number(baseStockQty.value) : 0
+    };
+
+    if (!payload.name) { alert('Vui lòng nhập tên sản phẩm'); return; }
+
+    try {
+      const method = id ? 'PUT' : 'POST';
+      const url    = id ? `${API}/${id}` : API;
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(await res.text() || 'Lỗi khi lưu sản phẩm');
+      window.location.href = '/admin/products';
+    } catch (err) {
+      alert(err.message || 'Không lưu được sản phẩm');
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Danh mục | Admin</title>
+    <meta name="description" content="" />
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <script src="../assets/vendor/js/helpers.js"></script>
+    <script src="../assets/js/config.js"></script>
+    <style>
+      #catTable td.actions,
+      #catTable th.actions {
+        white-space: nowrap;
+        width: 1%;
+      }
+      #catTable td.actions .btn { display: inline-flex; align-items: center; }
+    </style>
+  </head>
+  <body>
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- Sidebar -->
+        <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+          <div class="app-brand demo">
+            <a href="/admin" class="app-brand-link">
+              <span class="app-brand-logo demo">
+                <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+              </span>
+              <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+            </a>
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+              <i class="bx bx-chevron-left bx-sm align-middle"></i>
+            </a>
+          </div>
+          <div class="menu-inner-shadow"></div>
+          <ul class="menu-inner py-1">
+            <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+            <li class="menu-item active"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+          </ul>
+        </aside>
+
+        <div class="layout-page">
+          <!-- Navbar -->
+          <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"><i class="bx bx-menu bx-sm"></i></a>
+            </div>
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                  <i class="bx bx-search fs-4 lh-0"></i>
+                  <input type="text" id="navSearch" class="form-control border-0 shadow-none" placeholder="Tìm kiếm danh mục..." />
+                </div>
+              </div>
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online"><img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle"/></div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i><span>Hồ sơ</span></a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i><span>Cài đặt</span></a></li>
+                    <li><div class="dropdown-divider"></div></li>
+                    <li><a class="dropdown-item" href="auth-login-basic.html"><i class="bx bx-power-off me-2"></i><span>Đăng xuất</span></a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </nav>
+          <!-- /Navbar -->
+
+          <div class="content-wrapper">
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+                <h4 class="fw-bold mb-1">Quản lý Danh mục</h4>
+              </div>
+
+              <div class="row">
+                <!-- Table -->
+                <div class="col-lg-12">
+                  <div class="card">
+                    <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                      <h5 class="mb-0">Danh sách danh mục</h5>
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="input-group w-auto">
+                          <span class="input-group-text"><i class="bx bx-search"></i></span>
+                          <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo tên/slug..." />
+                        </div>
+                        <a class="btn btn-primary" href="/admin/categories/new"><i class="bx bx-plus me-1"></i> Thêm mới</a>
+                      </div>
+                    </div>
+
+                    <div class="table-responsive text-nowrap">
+                      <table class="table mb-0" id="catTable">
+                        <thead>
+                          <tr>
+                            <th style="width:72px">#</th>
+                            <th>Tên</th>
+                            <th>Slug</th>
+                            <th style="min-width:260px">Mô tả</th>
+                            <th>Danh mục cha</th>
+                            <th>Thứ tự</th>
+                            <th>Trạng thái</th>
+                            <th class="text-end actions" style="width:140px">Hành động</th>
+                          </tr>
+                        </thead>
+                        <tbody class="table-border-bottom-0" id="catBody"></tbody>
+                      </table>
+                    </div>
+
+                    <div class="card-footer d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                      <div id="pageInfo" class="text-muted small">Đang tải…</div>
+                      <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm btn-outline-secondary" id="btnPrev"><i class="bx bx-chevron-left"></i> Trước</button>
+                        <span id="pageCurrent" class="small"></span>
+                        <button class="btn btn-sm btn-outline-secondary" id="btnNext">Sau <i class="bx bx-chevron-right"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+                <div>© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+              </div>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../assets/vendor/js/menu.js"></script>
+
+    <script>
+(() => {
+  const API = '/api/admin/categories';
+  const body = document.getElementById('catBody');
+  const searchInput = document.getElementById('searchInput');
+  const navSearch   = document.getElementById('navSearch');
+  const pageInfo = document.getElementById('pageInfo');
+  const pageCurrent = document.getElementById('pageCurrent');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const state = { page: 0, size: 10, q: '' };
+
+  function esc(s){ return (s ?? '').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+  function badge(active){ return active ? '<span class="badge bg-label-success">KÍCH HOẠT</span>' : '<span class="badge bg-label-warning">ẨN</span>'; }
+
+  async function load(){
+    const url = `${API}?page=${state.page}&size=${state.size}${state.q ? `&q=${encodeURIComponent(state.q)}` : ''}`;
+    const res = await fetch(url);
+    if(!res.ok){ body.innerHTML = `<tr><td colspan="8" class="text-center text-danger">Không tải được dữ liệu</td></tr>`; return; }
+    const pg = await res.json();
+    body.innerHTML = '';
+    if(!pg.content || !pg.content.length){
+      body.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Không có dữ liệu</td></tr>`;
+    }else{
+      pg.content.forEach((c, i) => {
+        const idx = pg.pageable.pageNumber * pg.size + i + 1;
+        body.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td>${idx}</td>
+            <td><strong>${esc(c.name)}</strong></td>
+            <td>${esc(c.slug)}</td>
+            <td class="text-truncate" style="max-width:380px">${esc(c.description)}</td>
+            <td>${c.parentId ?? '-'}</td>
+            <td>${c.sortOrder ?? ''}</td>
+            <td>${badge(c.active)}</td>
+            <td class="text-end actions">
+              <div class="dropdown">
+                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/admin/categories/${c.id}">
+                    <i class="bx bx-edit-alt me-1"></i> Sửa
+                  </a>
+                  <a class="dropdown-item text-danger" href="javascript:void(0)" onclick="deleteCategory(${c.id})">
+                    <i class="bx bx-trash me-1"></i> Xóa
+                  </a>
+                </div>
+              </div>
+            </td>
+          </tr>`);
+      });
+    }
+    const from = pg.totalElements ? (pg.pageable.pageNumber * pg.size + 1) : 0;
+    const to   = pg.pageable.pageNumber * pg.size + pg.numberOfElements;
+    pageInfo.textContent = `Hiển thị ${from}-${to} / ${pg.totalElements}`;
+    pageCurrent.textContent = `Trang ${pg.pageable.pageNumber + 1}/${Math.max(pg.totalPages, 1)}`;
+    btnPrev.disabled = (pg.pageable.pageNumber <= 0);
+    btnNext.disabled = (pg.pageable.pageNumber >= (pg.totalPages - 1));
+  }
+
+  let debounce;
+  function triggerSearch(term){
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      state.q = term.trim();
+      state.page = 0;
+      // đồng bộ hai ô
+      if (searchInput && searchInput.value !== term) searchInput.value = term;
+      if (navSearch   && navSearch.value   !== term) navSearch.value   = term;
+      load();
+    }, 300);
+  }
+
+  // Ô trong bảng
+  searchInput?.addEventListener('input', () => triggerSearch(searchInput.value));
+  // Ô trên navbar  <-- THÊM
+  navSearch?.addEventListener('input',   () => triggerSearch(navSearch.value));
+  
+  btnPrev.addEventListener('click', () => { if(state.page > 0){ state.page--; load(); } });
+  btnNext.addEventListener('click', () => { state.page++; load(); });
+
+  window.deleteCategory = async (id) => {
+    if(!confirm('Xóa danh mục này?')) return;
+    const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+    if(res.ok) load(); else alert('Xóa thất bại');
+  };
+
+  window.toggleStatus = async (id, newState) => {
+    const res = await fetch(`${API}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ active: newState })
+    });
+    if(res.ok) load(); else alert('Không thể cập nhật trạng thái');
+  };
+
+  load();
+})();
+    </script>
+
+    <script src="../assets/js/main.js"></script>
+  </body>
+</html>

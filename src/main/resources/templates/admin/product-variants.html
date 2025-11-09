@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="vi"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="/assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+  <title>Biến thể sản phẩm | Admin</title>
+
+  <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+  <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+  <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+
+  <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+  <script th:src="@{/assets/js/config.js}"></script>
+  <style>
+    #varTable td.actions, #varTable th.actions { white-space: nowrap; width:1%; }
+    .w-90 { width: 90px; }
+  </style>
+</head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <!-- Sidebar -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+      <div class="app-brand demo">
+        <a href="/admin" class="app-brand-link">
+          <span class="app-brand-logo demo">
+            <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+          </span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+          <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+      </div>
+      <div class="menu-inner-shadow"></div>
+      <ul class="menu-inner py-1">
+        <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+        <li class="menu-item active"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+      </ul>
+    </aside>
+
+    <div class="layout-page">
+      <!-- Navbar -->
+      <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+          <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"><i class="bx bx-menu bx-sm"></i></a>
+        </div>
+        <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+          <div class="navbar-nav align-items-center">
+            <div class="nav-item d-flex align-items-center">
+              <i class="bx bx-search fs-4 lh-0"></i>
+              <input type="text" id="navSearch" class="form-control border-0 shadow-none" placeholder="Tìm biến thể..."/>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <!-- /Navbar -->
+
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div>
+              <h4 class="fw-bold mb-1">Biến thể sản phẩm</h4>
+              <small class="text-muted">Quản lý SKU, giá và tồn kho theo biến thể</small>
+            </div>
+            <div class="d-flex gap-2">
+              <a th:href="@{/admin/products}" class="btn btn-outline-secondary"><i class="bx bx-left-arrow-alt me-1"></i> Về danh sách SP</a>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#varModal"><i class="bx bx-plus me-1"></i> Thêm biến thể</button>
+            </div>
+          </div>
+
+          <input type="hidden" id="productId" th:value="${productId}"/>
+
+          <div class="card">
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <h5 class="mb-0">Danh sách biến thể</h5>
+              <div class="input-group w-auto">
+                <span class="input-group-text"><i class="bx bx-search"></i></span>
+                <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo option/SKU..."/>
+              </div>
+            </div>
+            <div class="table-responsive text-nowrap">
+              <table class="table mb-0" id="varTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>SKU</th>
+                    <th>Tên tuỳ chọn</th>
+                    <th class="text-end">Giá</th>
+                    <th class="text-end">Giá gạch</th>
+                    <th class="text-end">Cân nặng (kg)</th>
+                    <th class="text-end">Tồn</th>
+                    <th>Trạng thái</th>
+                    <th class="actions text-end">Hành động</th>
+                  </tr>
+                </thead>
+                <tbody id="varBody"></tbody>
+              </table>
+            </div>
+            <div class="card-footer d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+              <div id="pageInfo" class="text-muted small">Đang tải…</div>
+              <div class="d-flex align-items-center gap-2">
+                <button class="btn btn-sm btn-outline-secondary" id="btnPrev"><i class="bx bx-chevron-left"></i> Trước</button>
+                <span id="pageCurrent" class="small"></span>
+                <button class="btn btn-sm btn-outline-secondary" id="btnNext">Sau <i class="bx bx-chevron-right"></i></button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+            <div>© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal create/update -->
+<div class="modal fade" id="varModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" id="varForm">
+      <div class="modal-header">
+        <h5 class="modal-title" id="varModalTitle">Thêm biến thể</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="varId"/>
+        <div class="mb-3">
+          <label class="form-label">SKU</label>
+          <input type="text" id="sku" class="form-control" placeholder="VD: EN-500G"/>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Tên tuỳ chọn</label>
+          <input type="text" id="optionName" class="form-control" placeholder="VD: 500g / 1kg"/>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Đơn vị</label>
+            <input type="text" id="unit" class="form-control" placeholder="g, kg, hộp, ..."/>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Cân nặng (kg)</label>
+            <input type="number" id="weightKg" class="form-control" step="0.001" min="0"/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Giá</label>
+            <input type="number" id="price" class="form-control" step="0.01" min="0" required/>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Giá gạch</label>
+            <input type="number" id="compareAtPrice" class="form-control" step="0.01" min="0"/>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Tồn kho</label>
+            <input type="number" id="stockQty" class="form-control" step="1" min="0" value="0"/>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Trạng thái</label>
+            <select id="inStock" class="form-select">
+              <option value="true" selected>Còn bán</option>
+              <option value="false">Tắt bán</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Huỷ</button>
+        <button class="btn btn-primary" type="submit">Lưu</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Vendor JS -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+<script>
+(() => {
+  const pid = Number(document.getElementById('productId').value);
+  const API_LIST = `/api/admin/products/${pid}/variants`;  // trả List
+  const API_VAR  = `/api/admin/variants`;
+
+  const $ = (id) => document.getElementById(id);
+
+  // Table & controls
+  const body        = $('varBody');
+  const pageInfo    = $('pageInfo');
+  const pageCurrent = $('pageCurrent');
+  const btnPrev     = $('btnPrev');
+  const btnNext     = $('btnNext');
+  const searchInput = $('searchInput');
+  const navSearch   = $('navSearch');
+
+  // local state (server trả List nên không phân trang server)
+  const state = { q: '' };
+  let debounce;
+
+  // ---------- Helpers ----------
+  const fmtVnd = n => (n==null) ? '-' : new Intl.NumberFormat('vi-VN').format(n);
+
+  function badge(v){
+    return v ? '<span class="badge bg-label-success">Còn bán</span>'
+             : '<span class="badge bg-label-secondary">Tắt bán</span>';
+  }
+
+  // Ép kiểu an toàn khi build payload
+  function asStr(id){ const v = $(id).value.trim(); return v === '' ? null : v; }
+  function asNum(id){ const v = $(id).value.trim(); return v === '' ? null : Number(v); }
+  function asInt(id){ const v = $(id).value.trim(); return v === '' ? 0    : parseInt(v,10); }
+
+  // ---------- Load list (API trả List) ----------
+  async function load(){
+    const url = `${API_LIST}${state.q ? `?q=${encodeURIComponent(state.q)}` : ''}`;
+    const res = await fetch(url);
+    if(!res.ok){
+      body.innerHTML = `<tr><td colspan="9" class="text-center text-danger">Không tải được dữ liệu</td></tr>`;
+      pageInfo.textContent = '—';
+      pageCurrent.textContent = '';
+      btnPrev.disabled = btnNext.disabled = true;
+      return;
+    }
+    const arr = await res.json();  // <- List
+    body.innerHTML = '';
+
+    if(!arr.length){
+      body.innerHTML = `<tr><td colspan="9" class="text-center text-muted py-4">Chưa có biến thể</td></tr>`;
+    }else{
+      arr.forEach((v, i) => {
+        body.insertAdjacentHTML('beforeend', `
+          <tr>
+            <td>${i+1}</td>
+            <td><code>${v.sku ?? '-'}</code></td>
+            <td>${(v.optionName ?? '') || '-'}</td>
+            <td class="text-end">${fmtVnd(v.price)}</td>
+            <td class="text-end">${fmtVnd(v.compareAtPrice)}</td>
+            <td class="text-end">${v.weightKg ?? '-'}</td>
+            <td class="text-end">${v.stockQty ?? 0}</td>
+            <td>${badge(v.inStock)}</td>
+            <td class="actions text-end">
+              <div class="btn-group">
+                <button class="btn btn-sm btn-outline-secondary" onclick='openEdit(${JSON.stringify(v).replace(/'/g,"&#39;")})' title="Sửa"><i class="bx bx-edit"></i></button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="promptAdjust(${v.id})" title="Điều chỉnh tồn"><i class="bx bx-transfer-alt"></i></button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="toggleStock(${v.id}, ${!v.inStock})" title="Bật/Tắt bán"><i class="bx bx-toggle-${v.inStock?'right':'left'}"></i></button>
+                <button class="btn btn-sm btn-outline-danger" onclick="delVar(${v.id})" title="Xoá"><i class="bx bx-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `);
+      });
+    }
+
+    // Info dưới footer (vì không phân trang server)
+    pageInfo.textContent = `Tổng ${arr.length} biến thể`;
+    pageCurrent.textContent = '';
+    btnPrev.disabled = btnNext.disabled = true;
+  }
+
+  function syncSearch(term){
+    if (searchInput && searchInput.value !== term) searchInput.value = term;
+    if (navSearch   && navSearch.value   !== term) navSearch.value   = term;
+  }
+  function triggerSearch(term){
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      state.q = (term || '').trim();
+      syncSearch(state.q);
+      load();
+    }, 300);
+  }
+  searchInput?.addEventListener('input', () => triggerSearch(searchInput.value));
+  navSearch?.addEventListener('input',   () => triggerSearch(navSearch.value));
+
+  // ---------- Modal create/update ----------
+  const varModal = new bootstrap.Modal(document.getElementById('varModal'));
+  const varForm  = $('varForm');
+
+  window.openEdit = (v) => {
+    $('varModalTitle').textContent = 'Sửa biến thể';
+    $('varId').value         = v.id;
+    $('sku').value           = v.sku ?? '';
+    $('optionName').value    = v.optionName ?? '';
+    $('unit').value          = v.unit ?? '';
+    $('weightKg').value      = v.weightKg ?? '';
+    $('price').value         = v.price ?? '';
+    $('compareAtPrice').value= v.compareAtPrice ?? '';
+    $('stockQty').value      = v.stockQty ?? 0;
+    $('inStock').value       = (v.inStock ? 'true' : 'false');
+    varModal.show();
+  };
+
+  // Nút "Thêm biến thể"
+  document.querySelector('[data-bs-target="#varModal"]')?.addEventListener('click', () => {
+    $('varModalTitle').textContent = 'Thêm biến thể';
+    varForm.reset();
+    $('varId').value = '';
+    $('inStock').value = 'true';
+  });
+
+  // Submit create/update
+  varForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = $('varId').value ? Number($('varId').value) : null;
+
+    const payload = {
+      sku:            asStr('sku'),
+      optionName:     asStr('optionName'),
+      unit:           asStr('unit'),
+      weightKg:       asNum('weightKg'),
+      price:          asNum('price'),
+      compareAtPrice: asNum('compareAtPrice'),
+      stockQty:       asInt('stockQty'),
+      inStock:        $('inStock').value === 'true'
+    };
+
+    try {
+      const url    = id ? `${API_VAR}/${id}` : `${API_LIST}`;
+      const method = id ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error(await res.text() || 'Lưu biến thể thất bại');
+      varModal.hide();
+      load();
+    } catch (err) {
+      alert(err.message || 'Không lưu được biến thể');
+    }
+  });
+
+  // ---------- Actions ----------
+  window.promptAdjust = async (id) => {
+    const delta = prompt('Nhập số điều chỉnh (ví dụ +5 hoặc -3):', '0');
+    if(delta == null) return;
+    const n = Number(delta);
+    if (Number.isNaN(n) || !Number.isFinite(n)) { alert('Giá trị không hợp lệ'); return; }
+    const note = prompt('Ghi chú (tuỳ chọn):', '') || '';
+    const url  = `${API_VAR}/${id}/stock?delta=${encodeURIComponent(n)}${note ? `&note=${encodeURIComponent(note)}` : ''}`;
+    const res  = await fetch(url, { method: 'PATCH' });   // <-- phải PATCH
+    if(res.ok) load(); else alert('Điều chỉnh tồn thất bại');
+  };
+
+  window.toggleStock = async (id, value) => {
+    const res = await fetch(`${API_VAR}/${id}/in-stock?v=${value}`, { method: 'PATCH' });
+    if(res.ok) load(); else alert('Không thể cập nhật trạng thái bán');
+  };
+
+  window.delVar = async (id) => {
+    if(!confirm('Xoá biến thể này?')) return;
+    const res = await fetch(`${API_VAR}/${id}`, { method: 'DELETE' });
+    if(res.ok) load(); else alert('Xoá thất bại');
+  };
+
+  // First load
+  load();
+})();
+</script>
+
+</body>
+</html>

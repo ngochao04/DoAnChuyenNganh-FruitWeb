@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="vi"
+      class="light-style layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-assets-path="/assets/"
+      data-template="vertical-menu-template-free"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+  <title>Danh mục | Admin</title>
+
+  <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+  <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+  <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+
+  <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+  <script th:src="@{/assets/js/config.js}"></script>
+</head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <!-- Sidebar (rút gọn; bạn có thể tái dùng từ trang list) -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+          <div class="app-brand demo">
+            <a href="/admin" class="app-brand-link">
+              <span class="app-brand-logo demo">
+                <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+              </span>
+              <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+            </a>
+            <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+              <i class="bx bx-chevron-left bx-sm align-middle"></i>
+            </a>
+          </div>
+          <div class="menu-inner-shadow"></div>
+          <ul class="menu-inner py-1">
+            <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+            <li class="menu-item active"><a class="menu-link" href="categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+            <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+            <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+          </ul>
+        </aside>
+
+        <div class="layout-page">
+      <!-- Navbar -->
+      <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+              <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"><i class="bx bx-menu bx-sm"></i></a>
+            </div>
+            <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+              <div class="navbar-nav align-items-center">
+                <div class="nav-item d-flex align-items-center">
+                  <i class="bx bx-search fs-4 lh-0"></i>
+                  <input type="text" class="form-control border-0 shadow-none" placeholder="Tìm kiếm danh mục..." />
+                </div>
+              </div>
+              <ul class="navbar-nav flex-row align-items-center ms-auto">
+                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                  <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                    <div class="avatar avatar-online"><img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle"/></div>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i><span>Hồ sơ</span></a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i><span>Cài đặt</span></a></li>
+                    <li><div class="dropdown-divider"></div></li>
+                    <li><a class="dropdown-item" href="auth-login-basic.html"><i class="bx bx-power-off me-2"></i><span>Đăng xuất</span></a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </nav>
+      <!-- /Navbar -->
+
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div>
+              <h4 class="fw-bold mb-1" th:text="${categoryId} != null ? 'Sửa Danh mục' : 'Thêm Danh mục'"></h4>
+              <small class="text-muted">Quản lý thông tin danh mục sản phẩm</small>
+            </div>
+            <a th:href="@{/admin/categories}" class="btn btn-outline-secondary">
+              <i class="bx bx-left-arrow-alt me-1"></i>Về danh sách
+            </a>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-6 col-xl-5">
+              <div class="card mb-4">
+                <h5 class="card-header">Thông tin danh mục</h5>
+                <div class="card-body">
+                  <form id="categoryForm" th:attr="data-id=${categoryId}">
+                    <input type="hidden" id="catId" th:value="${categoryId}"/>
+
+                    <div class="mb-3">
+                      <label for="catName" class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="catName" placeholder="Ví dụ: Trái cây tươi" required/>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="catSlug" class="form-label">Slug</label>
+                      <input type="text" class="form-control" id="catSlug" placeholder="vi-du-trai-cay-tuoi"/>
+                      <div class="form-text">Tự sinh từ tên nếu để trống.</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="catDesc" class="form-label">Mô tả</label>
+                      <textarea id="catDesc" rows="3" class="form-control" placeholder="Mô tả ngắn..."></textarea>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-7 mb-3">
+                        <label for="catParent" class="form-label">Danh mục cha</label>
+                        <select id="catParent" class="form-select">
+                          <option value="">-- Không có (cấp 1) --</option>
+                          <option th:each="p : ${parents}" th:value="${p.id}" th:text="${p.name}"></option>
+                        </select>
+                      </div>
+                      <div class="col-md-5 mb-3">
+                        <label for="catSort" class="form-label">Thứ tự</label>
+                        <input type="number" class="form-control" id="catSort" placeholder="0"/>
+                      </div>
+                    </div>
+
+                    <div class="form-check form-switch mb-4">
+                      <input class="form-check-input" type="checkbox" id="catActive" checked/>
+                      <label class="form-check-label" for="catActive">Kích hoạt</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bx bx-save me-1"></i> Lưu
+                      </button>
+                      <a th:href="@{/admin/categories}" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- gợi ý: bạn có thể thêm card xem nhanh thông tin ở cột còn lại -->
+          </div>
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+            <div class="mb-2 mb-md-0">© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Vendor JS -->
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<!-- Page JS -->
+<script>
+(() => {
+  const API = '/api/admin/categories';
+  const $ = (id) => document.getElementById(id);
+
+  const catId    = $('catId');
+  const catName  = $('catName');
+  const catSlug  = $('catSlug');
+  const catDesc  = $('catDesc');
+  const catParent= $('catParent');
+  const catSort  = $('catSort');
+  const catActive= $('catActive');
+  const form     = document.getElementById('categoryForm');
+
+  // slugify tiếng Việt
+  const slugify = (s) => s.toString().toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/đ/g,'d')
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)+/g,'');
+
+  catName.addEventListener('input', () => {
+    if (!catSlug.value) catSlug.value = slugify(catName.value);
+  });
+
+  // Nếu có id -> load dữ liệu để sửa
+  const id = catId.value;
+  if (id) {
+    fetch(`${API}/${id}`)
+      .then(r => r.json())
+      .then(c => {
+        catName.value   = c.name || '';
+        catSlug.value   = c.slug || '';
+        catDesc.value   = c.description || '';
+        catParent.value = c.parentId ?? '';
+        catSort.value   = c.sortOrder ?? '';
+        catActive.checked = !!c.active;
+      })
+      .catch(() => alert('Không tải được dữ liệu danh mục!'));
+  }
+
+  // Submit tạo/sửa
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      name: catName.value.trim(),
+      slug: catSlug.value.trim() || slugify(catName.value.trim()),
+      description: catDesc.value.trim(),
+      parentId: catParent.value ? Number(catParent.value) : null,
+      sortOrder: catSort.value ? Number(catSort.value) : null,
+      active: catActive.checked
+    };
+
+    if (!payload.name) { alert('Vui lòng nhập tên danh mục'); return; }
+
+    try {
+      const method = id ? 'PUT' : 'POST';
+      const url    = id ? `${API}/${id}` : API;
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(await res.text() || 'Lỗi khi lưu danh mục');
+
+      // về danh sách sau khi lưu
+      window.location.href = '/admin/categories';
+    } catch (err) {
+      alert(err.message || 'Không lưu được danh mục');
+    }
+  });
+})();
+</script>
+</body>
+</html>
