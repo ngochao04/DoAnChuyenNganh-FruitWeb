@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi" class="light-style layout-menu-fixed" dir="ltr"
+      data-theme="theme-default" data-assets-path="../assets/"
+      data-template="vertical-menu-template-free">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Kho hàng | Admin</title>
+
+  <meta name="description" content="Trang quản lý kho hàng"/>
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css"/>
+  <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css"/>
+  <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css"/>
+  <link rel="stylesheet" href="../assets/css/demo.css"/>
+  <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css"/>
+
+  <script src="../assets/vendor/js/helpers.js"></script>
+  <script src="../assets/js/config.js"></script>
+
+  <style>
+    #invTable td.actions, #invTable th.actions { white-space: nowrap; width: 1%; }
+    #invTable td.actions .btn { display: inline-flex; align-items: center; }
+  </style>
+</head>
+<body>
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+
+      <!-- Sidebar -->
+      <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+        <div class="app-brand demo">
+          <a href="/admin" class="app-brand-link">
+            <span class="app-brand-logo demo">
+              <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+            </span>
+            <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+          </a>
+          <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+          </a>
+        </div>
+
+        <div class="menu-inner-shadow"></div>
+        <ul class="menu-inner py-1">
+          <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+          <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+          <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+          <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+          <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+          <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+            <li class="menu-item"><a class="menu-link" href="/admin/inventory"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+          <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+          <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+          <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+          <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+        </ul>
+      </aside>
+      <!-- /Sidebar -->
+
+      <div class="layout-page">
+
+        <!-- Navbar -->
+        <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+          <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+            <a class="nav-item nav-link px-0 me-xl-4"><i class="bx bx-menu bx-sm"></i></a>
+          </div>
+          <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+            <div class="navbar-nav align-items-center">
+              <div class="nav-item d-flex align-items-center">
+                <i class="bx bx-search fs-4 lh-0"></i>
+                <input type="text" id="navSearch" class="form-control border-0 shadow-none" placeholder="Tìm theo tên SP/option/SKU..."/>
+              </div>
+            </div>
+            <ul class="navbar-nav flex-row align-items-center ms-auto">
+              <li class="nav-item d-none d-sm-block me-3">
+                <a class="btn btn-sm btn-outline-secondary" href="/admin/products">Quay lại sản phẩm</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <!-- /Navbar -->
+
+        <!-- Content -->
+        <div class="content-wrapper">
+          <div class="container-xxl flex-grow-1 container-p-y">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+              <h4 class="fw-bold mb-1">Quản lý kho hàng</h4>
+            </div>
+
+            <div class="card">
+              <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <h5 class="mb-0">Danh sách biến thể</h5>
+                <div class="input-group w-auto">
+                  <span class="input-group-text"><i class="bx bx-search"></i></span>
+                  <input type="text" id="searchInput" class="form-control" placeholder="Tìm theo tên SP, SKU hoặc tùy chọn..."/>
+                </div>
+              </div>
+
+              <div class="table-responsive text-nowrap">
+                <table class="table mb-0" id="invTable">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Sản phẩm</th>
+                      <th>SKU</th>
+                      <th>Tuỳ chọn</th>
+                      <th class="text-end">Giá</th>
+                      <th class="text-end">Tồn</th>
+                      <th>Trạng thái</th>
+                      <th>Cập nhật</th>
+                      <th class="text-end actions">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="invBody"></tbody>
+                </table>
+              </div>
+
+              <div class="card-footer d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                <div id="pageInfo" class="text-muted small">Đang tải…</div>
+                <div class="d-flex align-items-center gap-2">
+                  <button class="btn btn-sm btn-outline-secondary" id="btnPrev"><i class="bx bx-chevron-left"></i> Trước</button>
+                  <span id="pageCurrent" class="small"></span>
+                  <button class="btn btn-sm btn-outline-secondary" id="btnNext">Sau <i class="bx bx-chevron-right"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <footer class="content-footer footer bg-footer-theme">
+            <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+              <div>© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="../assets/vendor/libs/popper/popper.js"></script>
+  <script src="../assets/vendor/js/bootstrap.js"></script>
+  <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="../assets/vendor/js/menu.js"></script>
+
+  <script>
+(() => {
+  const API = '/api/admin/variants';
+  const $ = id => document.getElementById(id);
+  const body = $('invBody');
+  const pageInfo = $('pageInfo');
+  const pageCurrent = $('pageCurrent');
+  const btnPrev = $('btnPrev');
+  const btnNext = $('btnNext');
+  const searchInput = $('searchInput');
+  const navSearch = $('navSearch');
+
+  const state = { page: 0, size: 10, q: '' };
+  let debounce;
+
+  const fmt = n => (n==null) ? '-' : new Intl.NumberFormat('vi-VN').format(n);
+  const esc = s => (s ?? '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const badge = v => v ? '<span class="badge bg-label-success">CÒN BÁN</span>' : '<span class="badge bg-label-secondary">TẮT BÁN</span>';
+  const whenUpdated = v => v?.updatedAt ? new Date(v.updatedAt).toLocaleString('vi-VN') : '-';
+
+  async function load(){
+    const url = `${API}?page=${state.page}&size=${state.size}${state.q ? `&q=${encodeURIComponent(state.q)}` : ''}`;
+    const res = await fetch(url);
+    if(!res.ok){
+      body.innerHTML = `<tr><td colspan="9" class="text-center text-danger py-4">Không tải được dữ liệu</td></tr>`;
+      return;
+    }
+    const pg = await res.json();
+    body.innerHTML = '';
+
+    if(!pg.content || !pg.content.length){
+      body.innerHTML = `<tr><td colspan="9" class="text-center text-muted py-4">Không có dữ liệu</td></tr>`;
+      return;
+    }
+
+    pg.content.forEach((v, i) => {
+      const idx = pg.pageable.pageNumber * pg.size + i + 1;
+      body.insertAdjacentHTML('beforeend', `
+        <tr>
+          <td>${idx}</td>
+          <td><a href="/admin/products/${v.productId}/variants"><strong>${esc(v.productName)}</strong></a></td>
+          <td><code>${esc(v.sku ?? '-')}</code></td>
+          <td>${esc(v.optionName ?? '-')}</td>
+          <td class="text-end">${fmt(v.price)}</td>
+          <td class="text-end">${v.stockQty ?? 0}</td>
+          <td>${badge(v.inStock)}</td>
+          <td>${whenUpdated(v)}</td>
+          <td class="text-end actions">
+            <div class="btn-group">
+              <a class="btn btn-sm btn-outline-secondary" href="/admin/products/${v.productId}/variants" title="Sửa nhanh"><i class="bx bx-edit-alt"></i></a>
+              <button class="btn btn-sm btn-outline-secondary" onclick="adjust(${v.id})" title="Điều chỉnh tồn"><i class="bx bx-transfer-alt"></i></button>
+              <button class="btn btn-sm btn-outline-secondary" onclick="toggle(${v.id}, ${!v.inStock})" title="Bật/Tắt bán"><i class="bx bx-toggle-${v.inStock?'right':'left'}"></i></button>
+              <button class="btn btn-sm btn-outline-danger" onclick="delVar(${v.id})" title="Xoá"><i class="bx bx-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `);
+    });
+
+    const from = pg.totalElements ? (pg.pageable.pageNumber * pg.size + 1) : 0;
+    const to   = pg.pageable.pageNumber * pg.size + pg.numberOfElements;
+    pageInfo.textContent = `Hiển thị ${from}-${to} / ${pg.totalElements}`;
+    pageCurrent.textContent = `Trang ${pg.pageable.pageNumber + 1}/${Math.max(pg.totalPages,1)}`;
+    btnPrev.disabled = (pg.pageable.pageNumber <= 0);
+    btnNext.disabled = (pg.pageable.pageNumber >= (pg.totalPages - 1));
+  }
+
+  let debounceTimer;
+  function trigger(term){
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      state.q = (term || '').trim();
+      state.page = 0;
+      load();
+    }, 300);
+  }
+
+  searchInput?.addEventListener('input', () => trigger(searchInput.value));
+  navSearch?.addEventListener('input', () => trigger(navSearch.value));
+  btnPrev.addEventListener('click', () => { if(state.page>0){ state.page--; load(); } });
+  btnNext.addEventListener('click', () => { state.page++; load(); });
+
+  window.adjust = async (id) => {
+    const delta = prompt('Nhập số điều chỉnh (vd: +10 hoặc -5):', '0');
+    if(delta == null) return;
+    const n = Number(delta);
+    if(Number.isNaN(n)) return alert('Giá trị không hợp lệ');
+    const note = prompt('Ghi chú (tuỳ chọn):', '') || '';
+    const res = await fetch(
+  `/api/admin/variants/${id}/stock?delta=${encodeURIComponent(n)}${note?`&note=${encodeURIComponent(note)}`:''}`,
+  { method: 'PATCH' }
+    );
+  };
+
+  window.toggle = async (id, v) => {
+    const res = await fetch(`/api/admin/variants/${id}/in-stock?v=${v}`, { method: 'PATCH' });
+    if(res.ok) load(); else alert('Không thể cập nhật trạng thái bán');
+  };
+
+  window.delVar = async (id) => {
+    if(!confirm('Xoá biến thể này?')) return;
+    const res = await fetch(`/api/admin/variants/${id}`, { method: 'DELETE' });
+    if(res.ok) load(); else alert('Xoá thất bại');
+  };
+
+  load();
+})();
+  </script>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>
