@@ -6,7 +6,7 @@
   <meta charset="utf-8" />
   <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
-  <title>Đơn hàng | Admin</title>
+  <title>Khách hàng | Admin</title>
   <meta name="description" content="" />
 
   <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
@@ -25,13 +25,13 @@
   <script src="../assets/js/config.js"></script>
 
   <style>
-    #orderTable td.actions,
-    #orderTable th.actions {
+    #customerTable td.actions,
+    #customerTable th.actions {
       white-space: nowrap;
       width: 1%;
     }
 
-    #orderTable td.actions .btn {
+    #customerTable td.actions .btn {
       display: inline-flex;
       align-items: center;
     }
@@ -89,14 +89,14 @@
           </a>
         </li>
 
-        <li class="menu-item active">
+        <li class="menu-item">
           <a class="menu-link" href="/admin/orders">
             <i class="menu-icon tf-icons bx bx-receipt"></i>
             <div>Đơn hàng</div>
           </a>
         </li>
 
-        <li class="menu-item">
+        <li class="menu-item active">
           <a class="menu-link" href="/admin/customers">
             <i class="menu-icon tf-icons bx bx-user"></i>
             <div>Khách hàng</div>
@@ -153,7 +153,7 @@
             <div class="nav-item d-flex align-items-center">
               <i class="bx bx-search fs-4 lh-0"></i>
               <input type="text" id="navSearch" class="form-control border-0 shadow-none"
-                     placeholder="Tìm theo mã đơn, tên, phone..." />
+                     placeholder="Tìm theo tên, email, phone..." />
             </div>
           </div>
 
@@ -195,40 +195,39 @@
         <div class="container-xxl flex-grow-1 container-p-y">
 
           <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
-            <h4 class="fw-bold mb-1">Quản lý Đơn hàng</h4>
+            <h4 class="fw-bold mb-1">Quản lý Khách hàng</h4>
           </div>
 
           <div class="row">
             <div class="col-lg-12">
               <div class="card">
                 <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
-                  <h5 class="mb-0">Danh sách đơn hàng</h5>
+                  <h5 class="mb-0">Danh sách khách hàng</h5>
                   <div class="d-flex align-items-center gap-2">
                     <div class="input-group w-auto">
                       <span class="input-group-text"><i class="bx bx-search"></i></span>
                       <input type="text" id="searchInput" class="form-control"
-                             placeholder="Tìm theo mã đơn, tên, phone..." />
+                             placeholder="Tìm theo tên, email, phone..." />
                     </div>
                   </div>
                 </div>
 
                 <div class="table-responsive text-nowrap">
-                  <table class="table mb-0" id="orderTable">
+                  <table class="table mb-0" id="customerTable">
                     <thead>
                     <tr>
                       <th style="width:50px">#</th>
+                      <th style="min-width:180px">Họ tên</th>
+                      <th style="min-width:200px">Email</th>
                       <th style="width:130px">Phone</th>
-                      <th style="min-width:160px">Tên KH</th>
-                      <th class="text-end" style="width:130px">Tiền hàng</th>
-                      <th class="text-end" style="width:130px">Giảm giá</th>
-                      <th class="text-end" style="width:150px">Tổng thanh toán</th>
-                      <th style="width:150px">Trạng thái</th>
-                      <th style="width:170px">Thanh toán</th>
-                      <th style="width:190px">Cập nhật</th>
-                      <th class="text-end actions" style="width:80px">Hành động</th>
+                      <th class="text-center" style="width:100px">Địa chỉ</th>
+                      <th class="text-center" style="width:120px">Email XN</th>
+                      <th style="width:120px">Trạng thái</th>
+                      <th style="width:180px">Tham gia</th>
+                      <th class="text-end actions" style="width:160px">Hành động</th>
                     </tr>
                     </thead>
-                    <tbody class="table-border-bottom-0" id="orderBody"></tbody>
+                    <tbody class="table-border-bottom-0" id="customerBody"></tbody>
                   </table>
                 </div>
 
@@ -262,94 +261,62 @@
   </div>
 </div>
 
-<!-- ================= MODAL CHI TIẾT ĐƠN HÀNG ================= -->
-<div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+<!-- ================= MODAL CHI TIẾT KHÁCH HÀNG ================= -->
+<div class="modal fade" id="customerDetailModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-xl modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
-          Chi tiết đơn hàng <span id="modalOrderNo" class="text-muted fs-6"></span>
+          Chi tiết khách hàng <span id="modalCustomerName" class="text-muted fs-6"></span>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
       </div>
 
       <div class="modal-body">
         <div class="row">
-          <!-- Cột trái -->
+          <!-- Cột trái: Thông tin khách hàng -->
           <div class="col-lg-4 mb-3">
             <div class="mb-4">
-              <h6 class="text-muted mb-2">Khách hàng</h6>
-              <p class="mb-2"><strong>Tên:</strong> <span id="modalRecipientName">...</span></p>
+              <h6 class="text-muted mb-3">Thông tin cá nhân</h6>
+              <p class="mb-2"><strong>Họ tên:</strong> <span id="modalFullName">...</span></p>
+              <p class="mb-2"><strong>Email:</strong> <span id="modalEmail">...</span></p>
               <p class="mb-2"><strong>Phone:</strong> <span id="modalPhone">...</span></p>
-              <p class="mb-0">
-                <strong>Địa chỉ:</strong><br>
-                <span id="modalAddressLine1"></span><br>
-                <span id="modalWard"></span>,
-                <span id="modalDistrict"></span>,
-                <span id="modalProvince"></span>
-              </p>
             </div>
 
             <div class="mb-4">
-              <h6 class="text-muted mb-2">Trạng thái</h6>
+              <h6 class="text-muted mb-3">Trạng thái tài khoản</h6>
               <p class="mb-2">
-                <strong>Đơn hàng:</strong><br>
-                <span id="modalStatusLabel" class="badge bg-label-primary rounded-pill">...</span>
-              </p>
-              <p class="mb-2">
-                <strong>Thanh toán:</strong><br>
-                <span id="modalPaymentMethodLabel"
-                      class="badge bg-label-secondary rounded-pill">...</span>
+                <strong>Kích hoạt:</strong>
+                <span id="modalIsActive" class="badge bg-label-success rounded-pill">...</span>
               </p>
               <p class="mb-0">
-                <strong>Trạng thái thanh toán:</strong><br>
-                <span id="modalPaymentStatusLabel"
-                      class="badge bg-label-warning rounded-pill">...</span>
+                <strong>Email xác nhận:</strong>
+                <span id="modalEmailVerified" class="badge bg-label-info rounded-pill">...</span>
               </p>
             </div>
 
             <div>
-              <h6 class="text-muted mb-2">Tổng tiền</h6>
+              <h6 class="text-muted mb-3">Thời gian</h6>
               <p class="mb-2">
-                <span>Tiền hàng:</span>
-                <span class="float-end" id="modalItemsTotal">0</span>
+                <strong>Tham gia:</strong><br>
+                <span id="modalCreatedAt">...</span>
               </p>
-              <p class="mb-2">
-                <span>Giảm giá:</span>
-                <span class="float-end" id="modalDiscountTotal">0</span>
-              </p>
-              <p class="mb-2">
-                <span>Phí vận chuyển:</span>
-                <span class="float-end" id="modalShippingFee">0</span>
-              </p>
-              <hr>
-              <p class="mb-0 fw-bold">
-                <span>Tổng thanh toán:</span>
-                <span class="float-end" id="modalGrandTotal">0</span>
+              <p class="mb-0">
+                <strong>Cập nhật:</strong><br>
+                <span id="modalUpdatedAt">...</span>
               </p>
             </div>
           </div>
 
-          <!-- Cột phải -->
+          <!-- Cột phải: Danh sách địa chỉ -->
           <div class="col-lg-8 mb-3">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h6 class="text-muted mb-0">Sản phẩm trong đơn</h6>
-              <small class="text-muted">Cập nhật: <span id="modalUpdatedAt">...</span></small>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h6 class="text-muted mb-0">Địa chỉ giao hàng</h6>
+              <span class="badge bg-label-secondary" id="addressCountBadge">0 địa chỉ</span>
             </div>
-            <div class="table-responsive text-nowrap">
-              <table class="table table-sm mb-0">
-                <thead>
-                <tr>
-                  <th style="width:40px">#</th>
-                  <th>Sản phẩm</th>
-                  <th class="text-end" style="width:70px">SL</th>
-                  <th class="text-end" style="width:120px">Đơn giá</th>
-                  <th class="text-end" style="width:120px">Giảm</th>
-                  <th class="text-end" style="width:140px">Thành tiền</th>
-                </tr>
-                </thead>
-                <tbody id="modalItemBody"></tbody>
-              </table>
+
+            <div id="addressList">
+              <!-- Address cards will be inserted here -->
             </div>
           </div>
 
@@ -357,9 +324,6 @@
       </div>
 
       <div class="modal-footer">
-        <small class="text-muted me-auto">
-          Tạo lúc: <span id="modalCreatedAt">...</span>
-        </small>
         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>
@@ -376,9 +340,9 @@
 
 <script>
 (() => {
-  const API = '/api/admin/orders';
+  const API = '/api/admin/customers';
 
-  const body = document.getElementById('orderBody');
+  const body = document.getElementById('customerBody');
   const searchInput = document.getElementById('searchInput');
   const navSearch   = document.getElementById('navSearch');
   const pageInfo    = document.getElementById('pageInfo');
@@ -388,9 +352,6 @@
 
   const state = { page: 0, size: 10, q: '' };
 
-  const fmtVnd = (n) => (n == null) ? '0'
-    : new Intl.NumberFormat('vi-VN').format(n);
-
   const esc = (s) => (s ?? '').toString()
     .replace(/&/g,'&amp;')
     .replace(/</g,'&lt;')
@@ -398,25 +359,22 @@
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#39;');
 
-  function whenUpdated(o){
-    if (!o.updatedAt) return '-';
-    try { return new Date(o.updatedAt).toLocaleString('vi-VN'); }
-    catch { return o.updatedAt; }
+  function formatDate(d){
+    if (!d) return '-';
+    try { return new Date(d).toLocaleString('vi-VN'); }
+    catch { return d; }
   }
 
-  function badgeStatus(o){
-    const text = o.statusLabel || o.status || '-';
-    return `<span class="badge bg-label-primary rounded-pill">${esc(text)}</span>`;
+  function badgeStatus(isActive){
+    return isActive
+      ? '<span class="badge bg-label-success rounded-pill">KÍCH HOẠT</span>'
+      : '<span class="badge bg-label-warning rounded-pill">VÔ HIỆU</span>';
   }
 
-  function badgePayment(o){
-    const method = o.paymentMethodLabel || o.paymentMethod || '';
-    const status = o.paymentStatusLabel || o.paymentStatus || '';
-    return `
-      <div class="d-flex flex-column gap-1">
-        <span class="badge bg-label-secondary rounded-pill">${esc(method)}</span>
-        <span class="badge bg-label-warning rounded-pill">${esc(status)}</span>
-      </div>`;
+  function badgeEmailVerified(verified){
+    return verified
+      ? '<span class="badge bg-label-success rounded-pill"><i class="bx bx-check"></i></span>'
+      : '<span class="badge bg-label-secondary rounded-pill"><i class="bx bx-x"></i></span>';
   }
 
   async function load(){
@@ -426,38 +384,46 @@
     const res = await fetch(url);
     if (!res.ok){
       body.innerHTML =
-        '<tr><td colspan="10" class="text-center text-danger py-3">Không tải được dữ liệu</td></tr>';
+        '<tr><td colspan="9" class="text-center text-danger py-3">Không tải được dữ liệu</td></tr>';
       pageInfo.textContent = 'Lỗi tải dữ liệu';
       pageCurrent.textContent = '';
       return;
     }
 
-    const pg = await res.json();   // <-- KHÔNG JSON.parse thủ công
+    const pg = await res.json();
 
     body.innerHTML = '';
 
     if (!pg.content || !pg.content.length){
       body.innerHTML =
-        '<tr><td colspan="10" class="text-center text-muted py-4">Không có dữ liệu</td></tr>';
+        '<tr><td colspan="9" class="text-center text-muted py-4">Không có dữ liệu</td></tr>';
     } else {
-      pg.content.forEach((o,i) => {
+      pg.content.forEach((u,i) => {
         const idx = pg.pageable.pageNumber * pg.size + i + 1;
         body.insertAdjacentHTML('beforeend', `
           <tr>
             <td>${idx}</td>
-            <td>${esc(o.phone || '')}</td>
-            <td>${esc(o.recipientName || '')}</td>
-            <td class="text-end">${fmtVnd(o.itemsTotal)}</td>
-            <td class="text-end">${fmtVnd(o.discountTotal)}</td>
-            <td class="text-end">${fmtVnd(o.grandTotal)}</td>
-            <td>${badgeStatus(o)}</td>
-            <td>${badgePayment(o)}</td>
-            <td>${whenUpdated(o)}</td>
+            <td><strong>${esc(u.fullName || '')}</strong></td>
+            <td>${esc(u.email || '')}</td>
+            <td>${esc(u.phone || '-')}</td>
+            <td class="text-center">
+              <span class="badge bg-label-info rounded-pill">${u.addressCount || 0}</span>
+            </td>
+            <td class="text-center">${badgeEmailVerified(u.emailVerified)}</td>
+            <td>${badgeStatus(u.isActive)}</td>
+            <td>${formatDate(u.createdAt)}</td>
             <td class="text-end actions">
               <button type="button"
-                      class="btn btn-sm btn-outline-secondary btn-view-order"
-                      data-id="${o.id}" title="Xem chi tiết">
+                      class="btn btn-sm btn-outline-primary btn-view-customer"
+                      data-id="${u.id}" title="Xem chi tiết">
                 <i class="bx bx-show"></i>
+              </button>
+              <button type="button"
+                      class="btn btn-sm ${u.isActive ? 'btn-outline-warning' : 'btn-outline-success'} btn-toggle-status"
+                      data-id="${u.id}" 
+                      data-active="${u.isActive}"
+                      title="${u.isActive ? 'Vô hiệu hóa' : 'Kích hoạt'}">
+                <i class="bx ${u.isActive ? 'bx-lock' : 'bx-lock-open'}"></i>
               </button>
             </td>
           </tr>
@@ -505,84 +471,124 @@
   });
 
   // ===== MODAL CHI TIẾT =====
-  async function openOrderModal(id){
+  async function openCustomerModal(id){
     try{
       const res = await fetch(`${API}/${id}`);
       if (!res.ok){
-        alert('Không tải được chi tiết đơn hàng');
+        alert('Không tải được chi tiết khách hàng');
         return;
       }
 
-      const o = await res.json();   // <-- CHỈ dùng res.json()
+      const u = await res.json();
 
-      document.getElementById('modalOrderNo').textContent =
-        o.orderNo ? `#${o.orderNo}` : `#${o.id}`;
+      document.getElementById('modalCustomerName').textContent = u.fullName || '';
+      document.getElementById('modalFullName').textContent = u.fullName || '-';
+      document.getElementById('modalEmail').textContent = u.email || '-';
+      document.getElementById('modalPhone').textContent = u.phone || '-';
 
-      document.getElementById('modalRecipientName').textContent = o.recipientName ?? '-';
-      document.getElementById('modalPhone').textContent         = o.phone ?? '-';
-      document.getElementById('modalAddressLine1').textContent  = o.addressLine1 ?? '';
-      document.getElementById('modalWard').textContent          = o.ward ?? '';
-      document.getElementById('modalDistrict').textContent      = o.district ?? '';
-      document.getElementById('modalProvince').textContent      = o.province ?? '';
+      const activeEl = document.getElementById('modalIsActive');
+      activeEl.textContent = u.isActive ? 'Đang hoạt động' : 'Vô hiệu hóa';
+      activeEl.className = u.isActive 
+        ? 'badge bg-label-success rounded-pill' 
+        : 'badge bg-label-warning rounded-pill';
 
-      document.getElementById('modalStatusLabel').textContent =
-        o.statusLabel ?? o.status ?? '-';
-      document.getElementById('modalPaymentMethodLabel').textContent =
-        o.paymentMethodLabel ?? o.paymentMethod ?? '-';
-      document.getElementById('modalPaymentStatusLabel').textContent =
-        o.paymentStatusLabel ?? o.paymentStatus ?? '-';
+      const verifiedEl = document.getElementById('modalEmailVerified');
+      verifiedEl.textContent = u.emailVerified ? 'Đã xác nhận' : 'Chưa xác nhận';
+      verifiedEl.className = u.emailVerified 
+        ? 'badge bg-label-success rounded-pill' 
+        : 'badge bg-label-secondary rounded-pill';
 
-      document.getElementById('modalItemsTotal').textContent    = fmtVnd(o.itemsTotal);
-      document.getElementById('modalDiscountTotal').textContent = fmtVnd(o.discountTotal);
-      document.getElementById('modalShippingFee').textContent   = fmtVnd(o.shippingFee);
-      document.getElementById('modalGrandTotal').textContent    = fmtVnd(o.grandTotal);
+      document.getElementById('modalCreatedAt').textContent = formatDate(u.createdAt);
+      document.getElementById('modalUpdatedAt').textContent = formatDate(u.updatedAt);
 
-      if (o.createdAt){
-        document.getElementById('modalCreatedAt').textContent =
-          new Date(o.createdAt).toLocaleString('vi-VN');
-      } else document.getElementById('modalCreatedAt').textContent = '-';
+      // Render addresses
+      const addressList = document.getElementById('addressList');
+      const addressCount = document.getElementById('addressCountBadge');
+      
+      addressCount.textContent = `${u.addresses?.length || 0} địa chỉ`;
 
-      if (o.updatedAt){
-        document.getElementById('modalUpdatedAt').textContent =
-          new Date(o.updatedAt).toLocaleString('vi-VN');
-      } else document.getElementById('modalUpdatedAt').textContent = '-';
-
-      const itemBody = document.getElementById('modalItemBody');
-      itemBody.innerHTML = '';
-      if (!o.items || !o.items.length){
-        itemBody.innerHTML =
-          '<tr><td colspan="6" class="text-center text-muted py-3">Không có sản phẩm trong đơn</td></tr>';
+      if (!u.addresses || !u.addresses.length){
+        addressList.innerHTML = '<div class="alert alert-info mb-0">Chưa có địa chỉ giao hàng</div>';
       } else {
-        o.items.forEach((it, idx) => {
-          itemBody.insertAdjacentHTML('beforeend', `
-            <tr>
-              <td>${idx + 1}</td>
-              <td>${esc(it.titleSnapshot ?? '')}</td>
-              <td class="text-end">${it.quantity ?? 0}</td>
-              <td class="text-end">${fmtVnd(it.unitPrice)}</td>
-              <td class="text-end">${fmtVnd(it.discount)}</td>
-              <td class="text-end">${fmtVnd(it.lineTotal)}</td>
-            </tr>
+        addressList.innerHTML = '';
+        u.addresses.forEach((addr, idx) => {
+          const isDefault = addr.isDefault 
+            ? '<span class="badge bg-label-primary ms-2">Mặc định</span>' 
+            : '';
+          
+          addressList.insertAdjacentHTML('beforeend', `
+            <div class="card mb-2">
+              <div class="card-body">
+                <h6 class="card-title mb-2">
+                  Địa chỉ ${idx + 1} ${isDefault}
+                </h6>
+                <p class="mb-1"><strong>Người nhận:</strong> ${esc(addr.recipientName || '-')}</p>
+                <p class="mb-1"><strong>Phone:</strong> ${esc(addr.phone || '-')}</p>
+                <p class="mb-1"><strong>Địa chỉ:</strong> ${esc(addr.line1 || '-')}</p>
+                <p class="mb-1">
+                  <strong>Khu vực:</strong> 
+                  ${esc(addr.ward || '')}, ${esc(addr.district || '')}, ${esc(addr.province || '')}
+                </p>
+                ${addr.note ? `<p class="mb-0"><strong>Ghi chú:</strong> ${esc(addr.note)}</p>` : ''}
+              </div>
+            </div>
           `);
         });
       }
 
-      const modalEl = document.getElementById('orderDetailModal');
+      const modalEl = document.getElementById('customerDetailModal');
       const modal   = new bootstrap.Modal(modalEl);
       modal.show();
 
     } catch (e){
-      console.error('Lỗi khi tải chi tiết đơn hàng', e);
-      alert('Lỗi khi tải chi tiết đơn hàng');
+      console.error('Lỗi khi tải chi tiết khách hàng', e);
+      alert('Lỗi khi tải chi tiết khách hàng');
     }
   }
 
-  // click nút xem
+  // ===== TOGGLE STATUS =====
+  async function toggleStatus(id, currentActive){
+    const newActive = !currentActive;
+    const confirmMsg = newActive 
+      ? 'Kích hoạt tài khoản khách hàng này?' 
+      : 'Vô hiệu hóa tài khoản khách hàng này?';
+    
+    if (!confirm(confirmMsg)) return;
+
+    try {
+      const res = await fetch(`${API}/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: newActive })
+      });
+
+      if (!res.ok) throw new Error('Failed to update status');
+
+      const result = await res.json();
+      alert(result.message || 'Đã cập nhật trạng thái');
+      load();
+    } catch (e) {
+      console.error('Lỗi khi cập nhật trạng thái', e);
+      alert('Không thể cập nhật trạng thái');
+    }
+  }
+
+  // click actions
   body.addEventListener('click', (e) => {
-    const btn = e.target.closest('.btn-view-order');
-    if (!btn) return;
-    const id = btn.dataset.id;
-    if (id) openOrderModal(id);
+    const viewBtn = e.target.closest('.btn-view-customer');
+    if (viewBtn) {
+      const id = viewBtn.dataset.id;
+      if (id) openCustomerModal(id);
+      return;
+    }
+
+    const toggleBtn = e.target.closest('.btn-toggle-status');
+    if (toggleBtn) {
+      const id = toggleBtn.dataset.id;
+      const active = toggleBtn.dataset.active === 'true';
+      if (id) toggleStatus(id, active);
+      return;
+    }
   });
 
   // init
