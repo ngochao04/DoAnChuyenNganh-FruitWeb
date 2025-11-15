@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Cửa Hàng - Fruitables</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Libraries Stylesheet -->
+    <link th:href="@{/fe/lib/lightbox/css/lightbox.min.css}" rel="stylesheet">
+    <link th:href="@{/fe/lib/owlcarousel/assets/owl.carousel.min.css}" rel="stylesheet">
+    
+    <!-- Customized Bootstrap Stylesheet -->
+    <link th:href="@{/fe/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/fe/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar start -->
+    <div class="container-fluid fixed-top">
+        <div class="container topbar bg-primary d-none d-lg-block">
+            <div class="d-flex justify-content-between">
+                <div class="top-info ps-2">
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
+                </div>
+            </div>
+        </div>
+        <div class="container px-0">
+            <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                <a th:href="@{/}" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a th:href="@{/}" class="nav-item nav-link">Home</a>
+                        <a th:href="@{/shop}" class="nav-item nav-link active">Shop</a>
+                        <a th:href="@{/contact}" class="nav-item nav-link">Contact</a>
+                    </div>
+                    <div class="d-flex m-3 me-0">
+                        <a th:href="@{/cart}" class="position-relative me-4 my-auto">
+                            <i class="fa fa-shopping-bag fa-2x"></i>
+                            <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Cửa Hàng Trái Cây</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item active text-white">Cửa hàng</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Fruits Shop Start-->
+    <div class="container-fluid fruite py-5">
+        <div class="container py-5">
+            <h1 class="mb-4">Sản phẩm tươi ngon</h1>
+            <div class="row g-4">
+                <div class="col-lg-12">
+                    <div class="row g-4">
+                        <div class="col-xl-3">
+                            <div class="input-group w-100 mx-auto d-flex">
+                                <input type="search" id="searchInput" class="form-control p-3" placeholder="Tìm kiếm sản phẩm...">
+                                <span class="input-group-text p-3"><i class="fa fa-search"></i></span>
+                            </div>
+                        </div>
+                        <div class="col-6"></div>
+                        <div class="col-xl-3">
+                            <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+                                <label for="sortSelect">Sắp xếp:</label>
+                                <select id="sortSelect" class="border-0 form-select-sm bg-light me-3">
+                                    <option value="name">Tên A-Z</option>
+                                    <option value="price-asc">Giá thấp đến cao</option>
+                                    <option value="price-desc">Giá cao đến thấp</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-4">
+                        <div class="col-lg-3">
+                            <div class="row g-4">
+                                <div class="col-lg-12">
+                                    <div class="mb-3">
+                                        <h4>Danh mục</h4>
+                                        <ul class="list-unstyled fruite-categorie" id="categoryList">
+                                            <!-- Categories will be loaded here -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-9">
+                            <!-- Loading -->
+                            <div id="loading" class="text-center py-5" style="display: none;">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Đang tải...</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Products Grid -->
+                            <div class="row g-4 justify-content-center" id="productsContainer">
+                                <!-- Products will be loaded here -->
+                            </div>
+                            
+                            <!-- No Products -->
+                            <div id="noProducts" class="text-center py-5" style="display: none;">
+                                <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                                <h4>Không tìm thấy sản phẩm</h4>
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <div class="col-12">
+                                <div class="pagination d-flex justify-content-center mt-5" id="pagination">
+                                    <!-- Pagination will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Fruits Shop End-->
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h1 class="text-primary mb-0">Fruitables</h1>
+                    <p class="text-secondary mb-0">Sản phẩm tươi ngon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/fe/lib/easing/easing.min.js}"></script>
+    <script th:src="@{/fe/lib/waypoints/waypoints.min.js}"></script>
+    <script th:src="@{/fe/lib/lightbox/js/lightbox.min.js}"></script>
+    <script th:src="@{/fe/lib/owlcarousel/owl.carousel.min.js}"></script>
+    <script th:src="@{/fe/js/main.js}"></script>
+
+    <script>
+        const API_BASE = '/api/admin';
+        let currentPage = 0;
+        let currentQuery = '';
+        let currentCategory = '';
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+            loadProducts();
+            updateCartCount();
+            
+            // Event Listeners
+            document.getElementById('searchInput').addEventListener('input', debounce(handleSearch, 500));
+            document.getElementById('sortSelect').addEventListener('change', loadProducts);
+        });
+        
+        // Load Categories
+        async function loadCategories() {
+            try {
+                const response = await fetch(`${API_BASE}/categories/all-min?onlyActive=true`);
+                const categories = await response.json();
+                
+                const container = document.getElementById('categoryList');
+                container.innerHTML = `
+                    <li>
+                        <div class="d-flex justify-content-between fruite-name">
+                            <a href="#" onclick="filterByCategory(''); return false;">
+                                <i class="fas fa-apple-alt me-2"></i>Tất cả
+                            </a>
+                        </div>
+                    </li>
+                `;
+                
+                categories.forEach(cat => {
+                    container.innerHTML += `
+                        <li>
+                            <div class="d-flex justify-content-between fruite-name">
+                                <a href="#" onclick="filterByCategory(${cat.id}); return false;">
+                                    <i class="fas fa-apple-alt me-2"></i>${cat.name}
+                                </a>
+                            </div>
+                        </li>
+                    `;
+                });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Load Products
+        async function loadProducts() {
+            showLoading(true);
+            
+            try {
+                let url = `${API_BASE}/products?page=${currentPage}&size=12`;
+                if (currentQuery) url += `&q=${encodeURIComponent(currentQuery)}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                displayProducts(data.content);
+                displayPagination(data);
+                
+                document.getElementById('noProducts').style.display = 
+                    data.content.length === 0 ? 'block' : 'none';
+            } catch (error) {
+                console.error('Error loading products:', error);
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Display Products
+        function displayProducts(products) {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+            
+            products.forEach(product => {
+                if (!product.active) return;
+                
+                const price = getPriceDisplay(product);
+                const imageUrl = product.mainImageUrl || '/fe/img/fruite-item-5.jpg';
+                
+                container.innerHTML += `
+                    <div class="col-md-6 col-lg-6 col-xl-4">
+                        <div class="rounded position-relative fruite-item">
+                            <div class="fruite-img">
+                                <img src="${imageUrl}" class="img-fluid w-100 rounded-top" alt="${product.name}">
+                            </div>
+                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Trái cây</div>
+                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                                <h4>${product.name}</h4>
+                                <p class="text-truncate">${product.shortDesc || 'Sản phẩm tươi ngon chất lượng cao'}</p>
+                                <div class="d-flex justify-content-between flex-lg-wrap">
+                                    ${price}
+                                    <a href="/shop-detail?id=${product.id}" class="btn border border-secondary rounded-pill px-3 text-primary">
+                                        <i class="fa fa-shopping-bag me-2 text-primary"></i>Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        
+        // Get Price Display
+        function getPriceDisplay(product) {
+            if (product.basePrice) {
+                return `<p class="text-dark fs-5 fw-bold mb-0">${formatPrice(product.basePrice)}</p>`;
+            } else if (product.priceMin && product.priceMax) {
+                if (product.priceMin === product.priceMax) {
+                    return `<p class="text-dark fs-5 fw-bold mb-0">${formatPrice(product.priceMin)}</p>`;
+                } else {
+                    return `<p class="text-dark fs-5 fw-bold mb-0">${formatPrice(product.priceMin)} - ${formatPrice(product.priceMax)}</p>`;
+                }
+            }
+            return '<p class="text-dark fs-5 fw-bold mb-0">Liên hệ</p>';
+        }
+        
+        // Display Pagination
+        function displayPagination(data) {
+            const container = document.getElementById('pagination');
+            if (data.totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous
+            html += `
+                <a href="#" class="rounded ${data.number === 0 ? 'disabled' : ''}" 
+                   onclick="goToPage(${data.number - 1}); return false;">&laquo;</a>
+            `;
+            
+            // Pages
+            for (let i = 0; i < data.totalPages; i++) {
+                html += `
+                    <a href="#" class="rounded ${i === data.number ? 'active' : ''}" 
+                       onclick="goToPage(${i}); return false;">${i + 1}</a>
+                `;
+            }
+            
+            // Next
+            html += `
+                <a href="#" class="rounded ${data.number === data.totalPages - 1 ? 'disabled' : ''}" 
+                   onclick="goToPage(${data.number + 1}); return false;">&raquo;</a>
+            `;
+            
+            container.innerHTML = html;
+        }
+        
+        // Event Handlers
+        function handleSearch(e) {
+            currentQuery = e.target.value.trim();
+            currentPage = 0;
+            loadProducts();
+        }
+        
+        function filterByCategory(categoryId) {
+            currentCategory = categoryId;
+            currentPage = 0;
+            loadProducts();
+        }
+        
+        function goToPage(page) {
+            currentPage = page;
+            loadProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Utilities
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('productsContainer').style.opacity = show ? '0.5' : '1';
+        }
+        
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+        
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+    </script>
+</body>
+</html>

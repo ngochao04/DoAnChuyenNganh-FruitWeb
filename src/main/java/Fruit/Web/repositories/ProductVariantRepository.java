@@ -2,6 +2,9 @@ package Fruit.Web.repositories;
 
 import Fruit.Web.models.ProductVariant;
 import Fruit.Web.projections.VariantRow;
+
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
@@ -57,4 +60,6 @@ public interface ProductVariantRepository extends JpaRepository<ProductVariant, 
     Page<VariantRow> searchAllRows(@Param("pid") Long productId,
                                    @Param("kw")  String keywordPattern,
                                    Pageable pageable);
+                                   
+    Optional<ProductVariant> findById(Long id);
 }
