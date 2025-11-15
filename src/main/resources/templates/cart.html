@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Giỏ Hàng - Fruitables</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link th:href="@{/fe/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/fe/css/style.css}" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Navbar start -->
+    <div class="container-fluid fixed-top">
+        <div class="container topbar bg-primary d-none d-lg-block">
+            <div class="d-flex justify-content-between">
+                <div class="top-info ps-2">
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">123 Street, New York</a></small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">Email@Example.com</a></small>
+                </div>
+            </div>
+        </div>
+        <div class="container px-0">
+            <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                <a th:href="@{/}" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a th:href="@{/}" class="nav-item nav-link">Trang chủ</a>
+                        <a th:href="@{/shop}" class="nav-item nav-link">Cửa hàng</a>
+                        <a th:href="@{/contact}" class="nav-item nav-link">Liên hệ</a>
+                    </div>
+                    <div class="d-flex m-3 me-0">
+                        <a th:href="@{/cart}" class="position-relative me-4 my-auto">
+                            <i class="fa fa-shopping-bag fa-2x"></i>
+                            <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Cart Page Start -->
+    <div class="container-fluid py-5 mt-5">
+        <div class="container py-5">
+            <h1 class="mb-4">Giỏ hàng của bạn</h1>
+            
+            <div id="emptyCart" class="text-center py-5" style="display: none;">
+                <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+                <h4>Giỏ hàng trống</h4>
+                <p>Hãy thêm sản phẩm vào giỏ hàng!</p>
+                <a th:href="@{/shop}" class="btn btn-primary">Tiếp tục mua sắm</a>
+            </div>
+            
+            <div id="cartContent">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Tên</th>
+                                <th>Giá</th>
+                                <th>Số lượng</th>
+                                <th>Tổng</th>
+                                <th>Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartItems">
+                            <!-- Cart items will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="row g-4 justify-content-end mt-4">
+                    <div class="col-sm-8 col-md-7 col-lg-6 col-xl-4">
+                        <div class="bg-light rounded">
+                            <div class="p-4">
+                                <h4 class="mb-4">Tổng giỏ hàng</h4>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h5 class="mb-0">Tạm tính:</h5>
+                                    <p class="mb-0" id="subtotal">0₫</p>
+                                </div>
+                                <div class="d-flex justify-content-between mb-4">
+                                    <h5 class="mb-0">Phí vận chuyển:</h5>
+                                    <p class="mb-0">30,000₫</p>
+                                </div>
+                            </div>
+                            <div class="py-4 mb-4 border-top d-flex justify-content-between px-4">
+                                <h5 class="mb-0">Tổng cộng:</h5>
+                                <p class="mb-0" id="grandTotal">0₫</p>
+                            </div>
+                            <a th:href="@{/checkout}" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4">
+                                Thanh toán
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Cart Page End -->
+
+    <!-- Footer -->
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h1 class="text-primary mb-0">Fruitables</h1>
+                    <p class="text-secondary mb-0">Sản phẩm tươi ngon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let cart = [];
+        const SHIPPING_FEE = 30000;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCart();
+            updateCartCount();
+        });
+        
+        function loadCart() {
+            cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            if (cart.length === 0) {
+                document.getElementById('emptyCart').style.display = 'block';
+                document.getElementById('cartContent').style.display = 'none';
+                return;
+            }
+            
+            displayCartItems();
+            updateTotals();
+        }
+        
+        function displayCartItems() {
+            const container = document.getElementById('cartItems');
+            container.innerHTML = '';
+            
+            cart.forEach((item, index) => {
+                container.innerHTML += `
+                    <tr>
+                        <td>
+                            <img src="${item.image || '/fe/img/vegetable-item-3.png'}" 
+                                 class="img-fluid rounded-circle" style="width: 80px; height: 80px;" alt="">
+                        </td>
+                        <td>
+                            <p class="mb-0 mt-4">${item.productName}</p>
+                            ${item.variantName ? `<small class="text-muted">${item.variantName}</small>` : ''}
+                        </td>
+                        <td>
+                            <p class="mb-0 mt-4">${formatPrice(item.price)}</p>
+                        </td>
+                        <td>
+                            <div class="input-group quantity mt-4" style="width: 120px;">
+                                <button class="btn btn-sm btn-minus rounded-circle bg-light border" 
+                                        onclick="updateQuantity(${index}, -1)">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <input type="text" class="form-control form-control-sm text-center border-0" 
+                                       value="${item.quantity}" readonly>
+                                <button class="btn btn-sm btn-plus rounded-circle bg-light border" 
+                                        onclick="updateQuantity(${index}, 1)">
+                                    <i class="fa fa-plus"></i>
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <p class="mb-0 mt-4">${formatPrice(item.price * item.quantity)}</p>
+                        </td>
+                        <td>
+                            <button class="btn btn-md rounded-circle bg-light border mt-4" 
+                                    onclick="removeItem(${index})">
+                                <i class="fa fa-times text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        
+        function updateQuantity(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                removeItem(index);
+                return;
+            }
+            saveCart();
+            loadCart();
+        }
+        
+        function removeItem(index) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                cart.splice(index, 1);
+                saveCart();
+                loadCart();
+            }
+        }
+        
+        function updateTotals() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const grandTotal = subtotal + SHIPPING_FEE;
+            
+            document.getElementById('subtotal').textContent = formatPrice(subtotal);
+            document.getElementById('grandTotal').textContent = formatPrice(grandTotal);
+        }
+        
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+        
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+        
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+    </script>
+</body>
+</html>
