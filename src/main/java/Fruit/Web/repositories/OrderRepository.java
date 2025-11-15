@@ -1,11 +1,17 @@
 package Fruit.Web.repositories;
 
 import Fruit.Web.models.Order;
+import Fruit.Web.models.OrderStatus;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+
+import java.time.OffsetDateTime;
+import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -23,4 +29,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
            order by o.createdAt desc
            """)
     Page<Order> searchAdmin(@Param("q") String q, Pageable pageable);
+    List<Order> findByCreatedAtBetween(OffsetDateTime start, OffsetDateTime end);
+    List<Order> findByCreatedAtBetweenAndStatusNot(OffsetDateTime start, OffsetDateTime end, OrderStatus status);
 }
