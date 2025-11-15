@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cấu hình | Admin</title>
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="../assets/vendor/css/core.css" />
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" />
+    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <script src="../assets/vendor/js/helpers.js"></script>
+    <script src="../assets/js/config.js"></script>
+    <style>
+        .settings-section { 
+            margin-bottom: 2rem; 
+            border-radius: 8px; 
+            overflow: hidden;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+        }
+        .settings-section.payment .section-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .settings-section.shipping .section-header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        .settings-section.email .section-header {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        .form-label { font-weight: 500; margin-bottom: 0.5rem; }
+        .form-text { font-size: 0.875rem; color: #697a8d; }
+        .switch-container { display: flex; align-items: center; gap: 0.75rem; }
+        .api-key-input { font-family: 'Courier New', monospace; font-size: 0.875rem; }
+    </style>
+</head>
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Sidebar (giống reports.html) -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="/admin" class="app-brand-link">
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+                    </a>
+                </div>
+                <ul class="menu-inner py-1">
+                    <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/orders"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/customers"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/inventory"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/promotions"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/reports"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+                    <li class="menu-item active"><a class="menu-link" href="/admin/settings"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+                </ul>
+            </aside>
+
+            <div class="layout-page">
+                <!-- Navbar -->
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+                    <div class="navbar-nav-right d-flex align-items-center ms-auto">
+                        <ul class="navbar-nav flex-row align-items-center">
+                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                                    <div class="avatar avatar-online"><img src="../assets/img/avatars/1.png" class="w-px-40 h-auto rounded-circle"/></div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <!-- Content -->
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-1">⚙️ Cấu hình hệ thống</h4>
+                                <p class="text-muted mb-0">Quản lý cấu hình thanh toán, vận chuyển và email</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="saveAllSettings()">
+                                <i class="bx bx-save me-1"></i> Lưu tất cả
+                            </button>
+                        </div>
+
+                        <!-- Shop Info -->
+                        <div class="card settings-section shop mb-4">
+                            <div class="section-header">
+                                <i class="bx bx-store me-2"></i> Thông tin cửa hàng
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Tên cửa hàng</label>
+                                        <input type="text" class="form-control" id="shop_name" placeholder="Fruit Shop" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="shop_email" placeholder="contact@shop.com" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Số điện thoại</label>
+                                        <input type="text" class="form-control" id="shop_phone" placeholder="0123456789" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Địa chỉ</label>
+                                        <input type="text" class="form-control" id="shop_address" placeholder="123 Đường ABC" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Settings -->
+                        <div class="card settings-section payment mb-4">
+                            <div class="section-header">
+                                <i class="bx bx-credit-card me-2"></i> Cấu hình thanh toán
+                            </div>
+                            <div class="card-body">
+                                <!-- COD -->
+                                <div class="mb-4">
+                                    <div class="switch-container mb-2">
+                                        <input type="checkbox" class="form-check-input" id="payment_cod_enabled" />
+                                        <label class="form-label mb-0" for="payment_cod_enabled">
+                                            <strong>Thanh toán khi nhận hàng (COD)</strong>
+                                        </label>
+                                    </div>
+                                    <div id="cod-config" style="display: none; padding-left: 2rem;">
+                                        <label class="form-label">Phí COD (%)</label>
+                                        <input type="number" class="form-control" id="payment_cod_fee" value="0" min="0" max="100" />
+                                        <small class="form-text">Phí thu thêm khi khách chọn COD (0 = miễn phí)</small>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <!-- VNPay -->
+                                <div class="mb-4">
+                                    <div class="switch-container mb-2">
+                                        <input type="checkbox" class="form-check-input" id="payment_vnpay_enabled" />
+                                        <label class="form-label mb-0" for="payment_vnpay_enabled">
+                                            <strong>VNPay</strong>
+                                        </label>
+                                    </div>
+                                    <div id="vnpay-config" style="display: none; padding-left: 2rem;">
+                                        <div class="mb-3">
+                                            <label class="form-label">TMN Code</label>
+                                            <input type="text" class="form-control api-key-input" id="payment_vnpay_tmn_code" placeholder="TMN Code từ VNPay" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Hash Secret</label>
+                                            <input type="password" class="form-control api-key-input" id="payment_vnpay_hash_secret" placeholder="Hash Secret từ VNPay" />
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="testPayment('vnpay')">
+                                            <i class="bx bx-test-tube"></i> Test kết nối
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <!-- MoMo -->
+                                <div class="mb-4">
+                                    <div class="switch-container mb-2">
+                                        <input type="checkbox" class="form-check-input" id="payment_momo_enabled" />
+                                        <label class="form-label mb-0" for="payment_momo_enabled">
+                                            <strong>MoMo</strong>
+                                        </label>
+                                    </div>
+                                    <div id="momo-config" style="display: none; padding-left: 2rem;">
+                                        <div class="mb-3">
+                                            <label class="form-label">Partner Code</label>
+                                            <input type="text" class="form-control api-key-input" id="payment_momo_partner_code" placeholder="Partner Code" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Access Key</label>
+                                            <input type="password" class="form-control api-key-input" id="payment_momo_access_key" placeholder="Access Key" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Secret Key</label>
+                                            <input type="password" class="form-control api-key-input" id="payment_momo_secret_key" placeholder="Secret Key" />
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="testPayment('momo')">
+                                            <i class="bx bx-test-tube"></i> Test kết nối
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <hr />
+
+                                <!-- Banking -->
+                                <div class="mb-3">
+                                    <div class="switch-container mb-2">
+                                        <input type="checkbox" class="form-check-input" id="payment_banking_enabled" />
+                                        <label class="form-label mb-0" for="payment_banking_enabled">
+                                            <strong>Chuyển khoản ngân hàng</strong>
+                                        </label>
+                                    </div>
+                                    <div id="banking-config" style="display: none; padding-left: 2rem;">
+                                        <textarea class="form-control" id="payment_banking_info" rows="4" placeholder='{"bank":"Vietcombank","account":"0123456789","owner":"NGUYEN VAN A"}'></textarea>
+                                        <small class="form-text">Thông tin chuyển khoản (định dạng JSON)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shipping Settings -->
+                        <div class="card settings-section shipping mb-4">
+                            <div class="section-header">
+                                <i class="bx bx-package me-2"></i> Cấu hình vận chuyển
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Loại phí ship</label>
+                                        <select class="form-select" id="shipping_fee_type">
+                                            <option value="FIXED">Cố định</option>
+                                            <option value="DISTANCE">Theo khoảng cách</option>
+                                            <option value="WEIGHT">Theo cân nặng</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phí ship cố định (VNĐ)</label>
+                                        <input type="number" class="form-control" id="shipping_fee_fixed" value="30000" min="0" />
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Miễn phí ship từ (VNĐ)</label>
+                                        <input type="number" class="form-control" id="shipping_free_over" value="500000" min="0" />
+                                        <small class="form-text">Đơn hàng từ giá trị này trở lên được miễn phí ship</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Thời gian giao hàng dự kiến</label>
+                                        <input type="text" class="form-control" id="shipping_time_estimate" value="2-3 ngày" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Email Settings -->
+                        <div class="card settings-section email mb-4">
+                            <div class="section-header">
+                                <i class="bx bx-envelope me-2"></i> Cấu hình Email
+                            </div>
+                            <div class="card-body">
+                                <div class="switch-container mb-3">
+                                    <input type="checkbox" class="form-check-input" id="email_enabled" />
+                                    <label class="form-label mb-0" for="email_enabled">
+                                        <strong>Bật gửi email tự động</strong>
+                                    </label>
+                                </div>
+                                <div id="email-config" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">SMTP Host</label>
+                                            <input type="text" class="form-control" id="email_smtp_host" value="smtp.gmail.com" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">SMTP Port</label>
+                                            <input type="number" class="form-control" id="email_smtp_port" value="587" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Username</label>
+                                            <input type="text" class="form-control" id="email_smtp_username" placeholder="your-email@gmail.com" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Password</label>
+                                            <input type="password" class="form-control" id="email_smtp_password" placeholder="App Password" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Email gửi đi</label>
+                                            <input type="email" class="form-control" id="email_from_address" placeholder="noreply@shop.com" />
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label">Tên người gửi</label>
+                                            <input type="text" class="form-control" id="email_from_name" value="Fruit Shop" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/js/menu.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        // Load settings khi trang vừa mở
+        async function loadSettings() {
+            try {
+                const response = await fetch('/admin/api/settings');
+                const data = await response.json();
+                
+                // Populate form với data
+                for (const category in data) {
+                    for (const key in data[category]) {
+                        const setting = data[category][key];
+                        const element = document.getElementById(key);
+                        
+                        if (element) {
+                            if (element.type === 'checkbox') {
+                                element.checked = setting.value === true;
+                                toggleConfig(key);
+                            } else {
+                                element.value = setting.value || '';
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                alert('Lỗi khi tải cấu hình!');
+            }
+        }
+
+        // Toggle config sections khi bật/tắt checkbox
+        function toggleConfig(checkboxId) {
+            const checkbox = document.getElementById(checkboxId);
+            const configMap = {
+                'payment_cod_enabled': 'cod-config',
+                'payment_vnpay_enabled': 'vnpay-config',
+                'payment_momo_enabled': 'momo-config',
+                'payment_banking_enabled': 'banking-config',
+                'email_enabled': 'email-config'
+            };
+            
+            const configDiv = document.getElementById(configMap[checkboxId]);
+            if (configDiv) {
+                configDiv.style.display = checkbox.checked ? 'block' : 'none';
+            }
+        }
+
+        // Add event listeners cho checkboxes
+        document.addEventListener('DOMContentLoaded', () => {
+            ['payment_cod_enabled', 'payment_vnpay_enabled', 'payment_momo_enabled', 
+             'payment_banking_enabled', 'email_enabled'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('change', () => toggleConfig(id));
+            });
+            
+            loadSettings();
+        });
+
+        // Lưu tất cả settings
+        async function saveAllSettings() {
+            const settings = {};
+            
+            // Collect all inputs
+            document.querySelectorAll('[id^="shop_"], [id^="payment_"], [id^="shipping_"], [id^="email_"]').forEach(el => {
+                if (el.type === 'checkbox') {
+                    settings[el.id] = el.checked.toString();
+                } else {
+                    settings[el.id] = el.value;
+                }
+            });
+            
+            try {
+                const response = await fetch('/admin/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert('✅ Lưu cấu hình thành công!');
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('❌ Lỗi khi lưu cấu hình!');
+            }
+        }
+
+        // Test kết nối payment gateway
+        async function testPayment(gateway) {
+            alert(`Đang test kết nối ${gateway.toUpperCase()}... (chức năng demo)`);
+        }
+    </script>
+</body>
+</html>
