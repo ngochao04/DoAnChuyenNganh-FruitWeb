@@ -67,10 +67,54 @@ public class SettingAdminController {
     @PostMapping("/api/settings/test-payment")
     @ResponseBody
     public ResponseEntity<Map<String, String>> testPaymentConnection(@RequestBody Map<String, String> config) {
-        // TODO: Implement test payment gateway connection
         Map<String, String> response = new HashMap<>();
-        response.put("status", "success");
-        response.put("message", "Kết nối thành công (demo)");
+        String gateway = config.get("gateway");
+        
+        try {
+            if ("momo".equalsIgnoreCase(gateway)) {
+                // Test MoMo connection
+                String partnerCode = config.get("partnerCode");
+                String accessKey = config.get("accessKey");
+                String secretKey = config.get("secretKey");
+                
+                if (partnerCode == null || partnerCode.trim().isEmpty() ||
+                    accessKey == null || accessKey.trim().isEmpty() ||
+                    secretKey == null || secretKey.trim().isEmpty()) {
+                    response.put("status", "error");
+                    response.put("message", "Vui lòng nhập đầy đủ thông tin MoMo (Partner Code, Access Key, Secret Key)");
+                    return ResponseEntity.ok(response);
+                }
+                
+                // TODO: Implement actual MoMo API test call here
+                // For now, just validate the fields are not empty
+                response.put("status", "success");
+                response.put("message", "Thông tin MoMo hợp lệ! (Lưu ý: Cần implement API test thực tế)");
+                
+            } else if ("vnpay".equalsIgnoreCase(gateway)) {
+                // Test VNPay connection
+                String tmnCode = config.get("tmnCode");
+                String hashSecret = config.get("hashSecret");
+                
+                if (tmnCode == null || tmnCode.trim().isEmpty() ||
+                    hashSecret == null || hashSecret.trim().isEmpty()) {
+                    response.put("status", "error");
+                    response.put("message", "Vui lòng nhập đầy đủ thông tin VNPay (TMN Code, Hash Secret)");
+                    return ResponseEntity.ok(response);
+                }
+                
+                // TODO: Implement actual VNPay API test call here
+                // For now, just validate the fields are not empty
+                response.put("status", "success");
+                response.put("message", "Thông tin VNPay hợp lệ! (Lưu ý: Cần implement API test thực tế)");
+                
+            } else {
+                response.put("status", "error");
+                response.put("message", "Gateway không được hỗ trợ: " + gateway);
+            }
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", "Lỗi khi test kết nối: " + e.getMessage());
+        }
         
         return ResponseEntity.ok(response);
     }

@@ -387,8 +387,66 @@
         }
 
         // Test kết nối payment gateway
+        // Test kết nối payment gateway
         async function testPayment(gateway) {
-            alert(`Đang test kết nối ${gateway.toUpperCase()}... (chức năng demo)`);
+            const config = { gateway: gateway };
+            
+            // Lấy thông tin cấu hình tương ứng
+            if (gateway === 'momo') {
+                const partnerCode = document.getElementById('payment_momo_partner_code').value.trim();
+                const accessKey = document.getElementById('payment_momo_access_key').value.trim();
+                const secretKey = document.getElementById('payment_momo_secret_key').value.trim();
+                
+                if (!partnerCode || !accessKey || !secretKey) {
+                    alert('⚠️ Vui lòng nhập đầy đủ thông tin MoMo trước khi test!');
+                    return;
+                }
+                
+                config.partnerCode = partnerCode;
+                config.accessKey = accessKey;
+                config.secretKey = secretKey;
+                
+            } else if (gateway === 'vnpay') {
+                const tmnCode = document.getElementById('payment_vnpay_tmn_code').value.trim();
+                const hashSecret = document.getElementById('payment_vnpay_hash_secret').value.trim();
+                
+                if (!tmnCode || !hashSecret) {
+                    alert('⚠️ Vui lòng nhập đầy đủ thông tin VNPay trước khi test!');
+                    return;
+                }
+                
+                config.tmnCode = tmnCode;
+                config.hashSecret = hashSecret;
+            }
+            
+            // Show loading
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="bx bx-loader bx-spin"></i> Đang kiểm tra...';
+            
+            try {
+                const response = await fetch('/admin/api/settings/test-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert('✅ ' + result.message);
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error testing payment:', error);
+                alert('❌ Lỗi khi test kết nối: ' + error.message);
+            } finally {
+                // Restore button
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
         }
     </script>
 </body>
