@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    <title>Báo cáo | Admin</title>
+    <meta name="description" content="" />
+    <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+    <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="../assets/css/demo.css" />
+    <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+    <script src="../assets/vendor/js/helpers.js"></script>
+    <script src="../assets/js/config.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        .stat-card { transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-4px); }
+        .nav-tabs .nav-link { 
+            color: #697a8d; 
+            border: none; 
+            padding: 0.75rem 1.5rem; 
+        }
+        .nav-tabs .nav-link.active { 
+            color: #696cff; 
+            border-bottom: 2px solid #696cff; 
+            background: transparent; 
+        }
+        canvas { max-height: 350px; }
+    </style>
+</head>
+<body>
+    <div class="layout-wrapper layout-content-navbar">
+        <div class="layout-container">
+            <!-- Sidebar -->
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo">
+                    <a href="/admin" class="app-brand-link">
+                        <span class="app-brand-logo demo">
+                            <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg">
+                                <g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g>
+                            </svg>
+                        </span>
+                        <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+                    </a>
+                    <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+                        <i class="bx bx-chevron-left bx-sm align-middle"></i>
+                    </a>
+                </div>
+                <div class="menu-inner-shadow"></div>
+                <ul class="menu-inner py-1">
+                    <li class="menu-item">
+                        <a href="/admin" class="menu-link">
+                            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+                            <div>Dashboard</div>
+                        </a>
+                    </li>
+
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/orders"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/customers"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/inventory"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+                    <li class="menu-item"><a class="menu-link" href="/admin/promotions"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+                    <li class="menu-item active"><a class="menu-link" href="/admin/reports"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+
+                    <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+                    <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+                </ul>
+            </aside>
+            <!-- /Sidebar -->
+
+            <!-- Layout container -->
+            <div class="layout-page">
+                <!-- Navbar -->
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                            <i class="bx bx-menu bx-sm"></i>
+                        </a>
+                    </div>
+                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+                        <div class="navbar-nav align-items-center">
+                            <div class="nav-item d-flex align-items-center">
+                                <i class="bx bx-search fs-4 lh-0"></i>
+                                <input type="text" class="form-control border-0 shadow-none" placeholder="Tìm kiếm..." aria-label="Search..." />
+                            </div>
+                        </div>
+                        <ul class="navbar-nav flex-row align-items-center ms-auto">
+                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                                    <div class="avatar avatar-online"><img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle"/></div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i><span>Hồ sơ</span></a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i><span>Cài đặt</span></a></li>
+                                    <li><div class="dropdown-divider"></div></li>
+                                    <li><a class="dropdown-item" href="auth-login-basic.html"><i class="bx bx-power-off me-2"></i><span>Đăng xuất</span></a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+                <!-- /Navbar -->
+
+                <!-- Content -->
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        <!-- Header -->
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <h4 class="fw-bold mb-1">Báo cáo</h4>
+                                <p class="text-muted mb-0">Xem chi tiết các chỉ số kinh doanh</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="exportReport()">
+                                <i class="bx bx-download me-1"></i> Xuất báo cáo
+                            </button>
+                        </div>
+
+                        <!-- Bộ lọc thời gian -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row align-items-end">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Từ ngày</label>
+                                        <input type="date" id="startDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Đến ngày</label>
+                                        <input type="date" id="endDate" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Nhóm theo</label>
+                                        <select id="groupBy" class="form-select">
+                                            <option value="day">Ngày</option>
+                                            <option value="week">Tuần</option>
+                                            <option value="month">Tháng</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-primary w-100" onclick="loadAllReports()">
+                                            <i class="bx bx-search-alt me-1"></i> Tìm kiếm
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs mb-4" id="reportTabs" role="tablist">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#revenue">
+                                    <i class="bx bx-line-chart me-1"></i> Doanh thu
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#orders">
+                                    <i class="bx bx-receipt me-1"></i> Đơn hàng
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#customers">
+                                    <i class="bx bx-user me-1"></i> Khách hàng
+                                </button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#products">
+                                    <i class="bx bx-cube me-1"></i> Sản phẩm
+                                </button>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <!-- Tab Doanh thu -->
+                            <div class="tab-pane fade show active" id="revenue">
+                                <div class="row mb-4">
+                                    <div class="col-md-4 col-sm-6 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Tổng doanh thu</span>
+                                                <h3 class="card-title text-nowrap mb-1 text-success" id="totalRevenue">0₫</h3>
+                                                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Tổng đơn hàng</span>
+                                                <h3 class="card-title text-nowrap mb-1 text-primary" id="totalOrdersRevenue">0</h3>
+                                                <small class="text-muted fw-semibold">đơn</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-6 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Giá trị TB/Đơn</span>
+                                                <h3 class="card-title text-nowrap mb-1 text-info" id="avgOrderValue">0₫</h3>
+                                                <small class="text-muted fw-semibold">trung bình</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h5 class="mb-0">Biểu đồ doanh thu</h5>
+                                        <small class="text-muted" id="chartPeriod">30 ngày gần đây</small>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="revenueChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Đơn hàng -->
+                            <div class="tab-pane fade" id="orders">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Đơn hàng theo trạng thái</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <canvas id="ordersStatusChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Chi tiết trạng thái</h5>
+                                    </div>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="table" id="ordersTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>Trạng thái</th>
+                                                    <th>Số lượng</th>
+                                                    <th>Tỷ lệ</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-border-bottom-0"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Khách hàng -->
+                            <div class="tab-pane fade" id="customers">
+                                <div class="row mb-4">
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Tổng khách hàng</span>
+                                                <h3 class="card-title text-nowrap mb-1" id="totalCustomers">0</h3>
+                                                <small class="text-muted fw-semibold">người</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Khách hàng mới</span>
+                                                <h3 class="card-title text-nowrap mb-1 text-success" id="newCustomers">0</h3>
+                                                <small class="text-success fw-semibold"><i class="bx bx-up-arrow-alt"></i></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0">Top 10 khách hàng</h5>
+                                    </div>
+                                    <div class="table-responsive text-nowrap">
+                                        <table class="table" id="topCustomersTable">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>ID Khách hàng</th>
+                                                    <th>Số đơn hàng</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="table-border-bottom-0"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab Sản phẩm -->
+                            <div class="tab-pane fade" id="products">
+                                <div class="row">
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Tổng sản phẩm</span>
+                                                <h3 class="card-title text-nowrap mb-1" id="totalProducts">0</h3>
+                                                <small class="text-muted fw-semibold">sản phẩm</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Đang hoạt động</span>
+                                                <h3 class="card-title text-nowrap mb-1 text-success" id="activeProducts">0</h3>
+                                                <small class="text-success fw-semibold"><i class="bx bx-check-circle"></i></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-4">
+                                        <div class="card stat-card">
+                                            <div class="card-body">
+                                                <span class="d-block mb-1">Sắp hết hàng</span>
+                                                <h3 class="card-title text-nowrap mb-1 text-danger" id="lowStockProducts">0</h3>
+                                                <small class="text-danger fw-semibold"><i class="bx bx-error-circle"></i></small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- Footer -->
+                    <footer class="content-footer footer bg-footer-theme">
+                        <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+                            <div class="mb-2 mb-md-0">© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+                        </div>
+                    </footer>
+                    <!-- /Footer -->
+                </div>
+                <!-- /Content -->
+            </div>
+            <!-- /Layout container -->
+        </div>
+    </div>
+
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="../assets/vendor/js/menu.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script>
+        let revenueChart = null;
+        let ordersStatusChart = null;
+
+        // Set default dates (last 30 days)
+        const today = new Date();
+        const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+        document.getElementById('endDate').valueAsDate = today;
+        document.getElementById('startDate').valueAsDate = thirtyDaysAgo;
+
+        // Load báo cáo doanh thu
+        async function loadRevenueReport() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const groupBy = document.getElementById('groupBy').value;
+
+            try {
+                const response = await fetch(`/admin/reports/revenue?startDate=${startDate}&endDate=${endDate}&groupBy=${groupBy}`);
+                const data = await response.json();
+
+                document.getElementById('totalRevenue').textContent = data.totalRevenue.toLocaleString('vi-VN') + '₫';
+                document.getElementById('totalOrdersRevenue').textContent = data.totalOrders;
+                document.getElementById('avgOrderValue').textContent = data.avgOrderValue.toLocaleString('vi-VN') + '₫';
+
+                const labels = Object.keys(data.chartData);
+                const values = Object.values(data.chartData);
+
+                if (revenueChart) revenueChart.destroy();
+
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                revenueChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Doanh thu (₫)',
+                            data: values,
+                            backgroundColor: 'rgba(105, 108, 255, 0.8)',
+                            borderColor: '#696cff',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: value => (value / 1000000).toFixed(1) + 'M' }
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading revenue report:', error);
+            }
+        }
+
+        // Load báo cáo đơn hàng
+        async function loadOrdersReport() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            try {
+                const response = await fetch(`/admin/reports/orders-by-status?startDate=${startDate}&endDate=${endDate}`);
+                const data = await response.json();
+
+                const labels = Object.keys(data.statusCount);
+                const values = Object.values(data.statusCount);
+
+                if (ordersStatusChart) ordersStatusChart.destroy();
+
+                const ctx = document.getElementById('ordersStatusChart').getContext('2d');
+                ordersStatusChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            data: values,
+                            backgroundColor: ['#696cff', '#28c76f', '#ff9f43', '#ea5455', '#00cfe8']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                const tbody = document.querySelector('#ordersTable tbody');
+                tbody.innerHTML = labels.map((label, i) => `
+                    <tr>
+                        <td><span class="badge bg-label-primary">${label}</span></td>
+                        <td><strong>${values[i]}</strong></td>
+                        <td>${((values[i] / data.totalOrders) * 100).toFixed(1)}%</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading orders report:', error);
+            }
+        }
+
+        // Load báo cáo khách hàng
+        async function loadCustomersReport() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            try {
+                const response = await fetch(`/admin/reports/customers?startDate=${startDate}&endDate=${endDate}`);
+                const data = await response.json();
+
+                document.getElementById('totalCustomers').textContent = data.totalCustomers;
+                document.getElementById('newCustomers').textContent = data.newCustomers || 0;
+
+                const tbody = document.querySelector('#topCustomersTable tbody');
+                tbody.innerHTML = data.topCustomers.map((customer, i) => `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>Khách hàng #${customer.userId}</td>
+                        <td><span class="badge bg-label-primary">${customer.orderCount} đơn</span></td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading customers report:', error);
+            }
+        }
+
+        // Load báo cáo sản phẩm
+        async function loadProductsReport() {
+            try {
+                const response = await fetch('/admin/reports/products');
+                const data = await response.json();
+
+                document.getElementById('totalProducts').textContent = data.totalProducts;
+                document.getElementById('activeProducts').textContent = data.activeProducts;
+                document.getElementById('lowStockProducts').textContent = data.lowStockProducts;
+            } catch (error) {
+                console.error('Error loading products report:', error);
+            }
+        }
+
+        // Load tất cả báo cáo
+        function loadAllReports() {
+            loadRevenueReport();
+            loadOrdersReport();
+            loadCustomersReport();
+            loadProductsReport();
+        }
+
+        // Export report
+        function exportReport() {
+            alert('Chức năng xuất báo cáo đang phát triển!');
+        }
+
+        // Load khi trang vừa mở
+        window.addEventListener('DOMContentLoaded', loadAllReports);
+    </script>
+</body>
+</html>
