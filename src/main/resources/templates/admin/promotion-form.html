@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="/assets/" data-template="vertical-menu-template-free" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+  <title>Khuyến mãi | Admin</title>
+  <link rel="icon" type="image/x-icon" th:href="@{/assets/img/favicon/favicon.ico}"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/fonts/boxicons.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/css/core.css}" rel="stylesheet" class="template-customizer-core-css"/>
+  <link th:href="@{/assets/vendor/css/theme-default.css}" rel="stylesheet" class="template-customizer-theme-css"/>
+  <link th:href="@{/assets/css/demo.css}" rel="stylesheet"/>
+  <link th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" rel="stylesheet"/>
+  <script th:src="@{/assets/vendor/js/helpers.js}"></script>
+  <script th:src="@{/assets/js/config.js}"></script>
+  <style>
+    .form-hint{font-size:.8rem;color:#6b7280}
+  </style>
+</head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <!-- Sidebar -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+      <div class="app-brand demo">
+        <a href="/admin" class="app-brand-link">
+          <span class="app-brand-logo demo">
+            <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+          </span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+          <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+      </div>
+      <div class="menu-inner-shadow"></div>
+      <ul class="menu-inner py-1">
+        <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/orders"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/customers"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/inventory"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+        <li class="menu-item active"><a class="menu-link" href="/admin/promotions"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+      </ul>
+    </aside>
+
+    <div class="layout-page">
+      <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+          <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"><i class="bx bx-menu bx-sm"></i></a>
+        </div>
+        <div class="navbar-nav-right d-flex align-items-center">
+          <ul class="navbar-nav flex-row align-items-center ms-auto">
+            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+              <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                <div class="avatar avatar-online"><img th:src="@{/assets/img/avatars/1.png}" alt class="w-px-40 h-auto rounded-circle"/></div>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i><span>Hồ sơ</span></a></li>
+                <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i><span>Cài đặt</span></a></li>
+                <li><div class="dropdown-divider"></div></li>
+                <li><a class="dropdown-item" href="#"><i class="bx bx-power-off me-2"></i><span>Đăng xuất</span></a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
+            <div>
+              <h4 class="fw-bold mb-1" th:text="${promotionId} != null ? 'Sửa Khuyến mãi' : 'Thêm Khuyến mãi'"></h4>
+              <small class="text-muted">Quản lý chương trình khuyến mãi</small>
+            </div>
+            <a th:href="@{/admin/promotions}" class="btn btn-outline-secondary">
+              <i class="bx bx-left-arrow-alt me-1"></i>Về danh sách
+            </a>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="card">
+                <h5 class="card-header">Thông tin khuyến mãi</h5>
+                <div class="card-body">
+                  <form id="promoForm" th:attr="data-id=${promotionId}">
+                    <input type="hidden" id="promoId" th:value="${promotionId}"/>
+
+                    <div class="mb-3">
+                      <label for="promoName" class="form-label">Tên chương trình <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="promoName" placeholder="VD: Giảm 20% Trung Thu" required/>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="description" class="form-label">Mô tả</label>
+                      <textarea id="description" rows="3" class="form-control" placeholder="Mô tả chi tiết chương trình..."></textarea>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="startsAt" class="form-label">Ngày bắt đầu</label>
+                        <input type="datetime-local" class="form-control" id="startsAt"/>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="endsAt" class="form-label">Ngày kết thúc</label>
+                        <input type="datetime-local" class="form-control" id="endsAt"/>
+                      </div>
+                    </div>
+
+                    <hr class="my-4">
+                    <h6 class="mb-3">Điều kiện & Giảm giá</h6>
+
+                    <div class="mb-3">
+                      <label for="minOrderAmount" class="form-label">Giá trị đơn hàng tối thiểu (VNĐ)</label>
+                      <input type="number" id="minOrderAmount" class="form-control" step="0.01" min="0" placeholder="VD: 500000"/>
+                      <div class="form-hint">Để trống nếu không có điều kiện.</div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-4 mb-3">
+                        <label for="shippingDiscount" class="form-label">Giảm phí ship (VNĐ)</label>
+                        <input type="number" id="shippingDiscount" class="form-control" step="0.01" min="0" placeholder="VD: 30000"/>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="amountOff" class="form-label">Giảm tiền (VNĐ)</label>
+                        <input type="number" id="amountOff" class="form-control" step="0.01" min="0" placeholder="VD: 100000"/>
+                      </div>
+                      <div class="col-md-4 mb-3">
+                        <label for="percentOff" class="form-label">Giảm phần trăm (%)</label>
+                        <input type="number" id="percentOff" class="form-control" step="0.01" min="0" max="100" placeholder="VD: 20"/>
+                      </div>
+                    </div>
+                    <div class="form-hint mb-3">Có thể kết hợp nhiều loại giảm giá.</div>
+
+                    <div class="form-check form-switch mb-4">
+                      <input class="form-check-input" type="checkbox" id="isActive" checked/>
+                      <label class="form-check-label" for="isActive">Kích hoạt</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bx bx-save me-1"></i> Lưu
+                      </button>
+                      <a th:href="@{/admin/promotions}" class="btn btn-outline-secondary">Hủy</a>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl d-flex justify-content-between py-2 flex-md-row flex-column">
+            <div>© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<script>
+(() => {
+  const API = '/api/admin/promotions';
+  const $ = (id) => document.getElementById(id);
+
+  const promoId = $('promoId');
+  const promoName = $('promoName');
+  const description = $('description');
+  const startsAt = $('startsAt');
+  const endsAt = $('endsAt');
+  const minOrderAmount = $('minOrderAmount');
+  const shippingDiscount = $('shippingDiscount');
+  const amountOff = $('amountOff');
+  const percentOff = $('percentOff');
+  const isActive = $('isActive');
+  const form = $('promoForm');
+
+  function toLocalDatetimeString(dt) {
+    if (!dt) return '';
+    const d = new Date(dt);
+    const pad = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  const id = promoId?.value;
+  (async () => {
+    if (id) {
+      try {
+        const r = await fetch(`${API}/${id}`);
+        if (!r.ok) throw new Error('Không tải được dữ liệu');
+        const p = await r.json();
+
+        promoName.value = p.name ?? '';
+        description.value = p.description ?? '';
+        startsAt.value = toLocalDatetimeString(p.startsAt);
+        endsAt.value = toLocalDatetimeString(p.endsAt);
+        minOrderAmount.value = p.minOrderAmount ?? '';
+        shippingDiscount.value = p.shippingDiscount ?? '';
+        amountOff.value = p.amountOff ?? '';
+        percentOff.value = p.percentOff ?? '';
+        isActive.checked = !!p.isActive;
+      } catch (e) {
+        alert(e.message || 'Không tải được dữ liệu');
+      }
+    }
+  })();
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      name: promoName.value.trim(),
+      description: description.value.trim() || null,
+      startsAt: startsAt.value || null,
+      endsAt: endsAt.value || null,
+      minOrderAmount: minOrderAmount.value ? Number(minOrderAmount.value) : null,
+      shippingDiscount: shippingDiscount.value ? Number(shippingDiscount.value) : null,
+      amountOff: amountOff.value ? Number(amountOff.value) : null,
+      percentOff: percentOff.value ? Number(percentOff.value) : null,
+      isActive: !!isActive.checked
+    };
+
+    if (!payload.name) { alert('Vui lòng nhập tên chương trình'); return; }
+
+    try {
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `${API}/${id}` : API;
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(await res.text() || 'Lỗi khi lưu');
+      window.location.href = '/admin/promotions';
+    } catch (err) {
+      alert(err.message || 'Không lưu được');
+    }
+  });
+})();
+</script>
+</body>
+</html>

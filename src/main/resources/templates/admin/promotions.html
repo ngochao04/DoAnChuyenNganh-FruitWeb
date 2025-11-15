@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <title>Khuyến mãi | Admin</title>
+  <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/vendor/fonts/boxicons.css" />
+  <link rel="stylesheet" href="../assets/vendor/css/core.css" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="../assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="../assets/css/demo.css" />
+  <link rel="stylesheet" href="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+  <script src="../assets/vendor/js/helpers.js"></script>
+  <script src="../assets/js/config.js"></script>
+  <style>
+    .table td.actions, .table th.actions { white-space: nowrap; width: 1%; }
+    .table td.actions .btn { display: inline-flex; align-items: center; }
+  </style>
+</head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+      <div class="app-brand demo">
+        <a href="/admin" class="app-brand-link">
+          <span class="app-brand-logo demo">
+            <svg width="25" viewBox="0 0 25 42" xmlns="http://www.w3.org/2000/svg"><g fill="#696cff"><path d="M13.79.36 3.4 7.44c-2.83 2.25-3.78 5.03-2.84 8.35.13.43.53 1.98 2.57 3.42.7.49 2.21 1.15 4.55 1.99l-4.96 3.31c-2.19 1.75-2.55 3.95-1.08 6.62 1.27 1.64 3.64 2.08 5.52 1.35 1.26-.48 4.37-2.53 9.33-6.17 1.62-1.87 2.29-3.91 2-6.13-.45-2.7-2.24-4.66-5.37-5.86l-2.13-.9 7.7-5.49L13.79.36z"/></g></svg>
+          </span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2">Admin</span>
+        </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+          <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+      </div>
+      <div class="menu-inner-shadow"></div>
+      <ul class="menu-inner py-1">
+        <li class="menu-item"><a href="/admin" class="menu-link"><i class="menu-icon tf-icons bx bx-home-circle"></i><div>Dashboard</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Quản lý</span></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/categories"><i class="menu-icon tf-icons bx bx-purchase-tag"></i><div>Danh mục</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="menu-icon tf-icons bx bx-cube"></i><div>Sản phẩm</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/orders"><i class="menu-icon tf-icons bx bx-receipt"></i><div>Đơn hàng</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/customers"><i class="menu-icon tf-icons bx bx-user"></i><div>Khách hàng</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="/admin/inventory"><i class="menu-icon tf-icons bx bx-store"></i><div>Kho</div></a></li>
+        <li class="menu-item active"><a class="menu-link" href="/admin/promotions"><i class="menu-icon tf-icons bx bx-gift"></i><div>Khuyến mãi</div></a></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-bar-chart"></i><div>Báo cáo</div></a></li>
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Hệ thống</span></li>
+        <li class="menu-item"><a class="menu-link" href="#"><i class="menu-icon tf-icons bx bx-cog"></i><div>Cấu hình</div></a></li>
+      </ul>
+    </aside>
+
+    <div class="layout-page">
+      <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+          <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)"><i class="bx bx-menu bx-sm"></i></a>
+        </div>
+        <div class="navbar-nav-right d-flex align-items-center">
+          <ul class="navbar-nav flex-row align-items-center ms-auto">
+            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+              <a class="nav-link dropdown-toggle hide-arrow" href="#" data-bs-toggle="dropdown">
+                <div class="avatar avatar-online"><img src="../assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle"/></div>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#"><i class="bx bx-user me-2"></i><span>Hồ sơ</span></a></li>
+                <li><a class="dropdown-item" href="#"><i class="bx bx-cog me-2"></i><span>Cài đặt</span></a></li>
+                <li><div class="dropdown-divider"></div></li>
+                <li><a class="dropdown-item" href="#"><i class="bx bx-power-off me-2"></i><span>Đăng xuất</span></a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <h4 class="fw-bold mb-4">Quản lý Khuyến mãi & Mã giảm giá</h4>
+
+          <ul class="nav nav-tabs mb-3" role="tablist">
+            <li class="nav-item">
+              <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#promotions" type="button">
+                <i class="bx bx-gift me-1"></i> Chương trình KM
+              </button>
+            </li>
+            <li class="nav-item">
+              <button class="nav-link" data-bs-toggle="tab" data-bs-target="#coupons" type="button">
+                <i class="bx bx-purchase-tag me-1"></i> Mã giảm giá
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content">
+            <div class="tab-pane fade show active" id="promotions">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Chương trình khuyến mãi</h5>
+                  <div class="d-flex gap-2">
+                    <input type="text" id="searchPromo" class="form-control" placeholder="Tìm kiếm..." style="width:250px"/>
+                    <a class="btn btn-primary" href="/admin/promotions/new"><i class="bx bx-plus me-1"></i> Thêm</a>
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>#</th><th>Tên</th><th>Thời gian</th><th class="text-end">Đơn TT</th>
+                      <th class="text-end">Giảm ship</th><th class="text-end">Giảm $</th><th class="text-end">Giảm %</th>
+                      <th>TT</th><th class="text-end actions">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="promoBody"></tbody>
+                  </table>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                  <div id="promoInfo"></div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" id="promoPrev"><i class="bx bx-chevron-left"></i></button>
+                    <span id="promoCur"></span>
+                    <button class="btn btn-sm btn-outline-secondary" id="promoNext"><i class="bx bx-chevron-right"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tab-pane fade" id="coupons">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Mã giảm giá</h5>
+                  <div class="d-flex gap-2">
+                    <input type="text" id="searchCoupon" class="form-control" placeholder="Tìm kiếm..." style="width:250px"/>
+                    <button class="btn btn-primary" onclick="openCouponModal()"><i class="bx bx-plus me-1"></i> Thêm</button>
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>#</th><th>Mã</th><th>Mô tả</th><th>Thời gian</th>
+                      <th class="text-center">Dùng/Max</th><th class="text-end">Đơn TT</th>
+                      <th class="text-end">Giảm</th><th>TT</th><th class="text-end actions">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="couponBody"></tbody>
+                  </table>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                  <div id="couponInfo"></div>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary" id="couponPrev"><i class="bx bx-chevron-left"></i></button>
+                    <span id="couponCur"></span>
+                    <button class="btn btn-sm btn-outline-secondary" id="couponNext"><i class="bx bx-chevron-right"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl d-flex justify-content-between py-2">
+            <div>© <script>document.write(new Date().getFullYear())</script> - Admin</div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="couponModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="couponModalTitle">Thêm mã giảm giá</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="couponForm">
+          <input type="hidden" id="couponId"/>
+          <div class="mb-3">
+            <label class="form-label">Mã <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="couponCode" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Mô tả</label>
+            <textarea id="couponDesc" rows="2" class="form-control"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Bắt đầu</label>
+              <input type="datetime-local" class="form-control" id="couponStart"/>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Kết thúc</label>
+              <input type="datetime-local" class="form-control" id="couponEnd"/>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Số lần dùng tối đa</label>
+            <input type="number" id="couponMax" class="form-control" min="0"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Đơn tối thiểu (VNĐ)</label>
+            <input type="number" id="couponMin" class="form-control" step="0.01" min="0"/>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Giảm tiền (VNĐ)</label>
+              <input type="number" id="couponAmt" class="form-control" step="0.01" min="0"/>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Giảm % </label>
+              <input type="number" id="couponPct" class="form-control" step="0.01" min="0" max="100"/>
+            </div>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="couponActive" checked/>
+            <label class="form-check-label">Kích hoạt</label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-primary" onclick="saveCoupon()"><i class="bx bx-save me-1"></i> Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/vendor/libs/jquery/jquery.js"></script>
+<script src="../assets/vendor/libs/popper/popper.js"></script>
+<script src="../assets/vendor/js/bootstrap.js"></script>
+<script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="../assets/vendor/js/menu.js"></script>
+<script>
+const PROMO='/api/admin/promotions',COUPON='/api/admin/coupons';
+const fmt=n=>(n==null)?'-':new Intl.NumberFormat('vi-VN').format(n);
+const pct=n=>(n==null)?'-':n+'%';
+const esc=s=>(s??'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const badge=a=>a?'<span class="badge bg-label-success">ON</span>':'<span class="badge bg-label-warning">OFF</span>';
+const dt=(s,e)=>{const f=d=>{if(!d)return'';try{return new Date(d).toLocaleDateString('vi-VN')}catch{return d}};const a=f(s),b=f(e);if(!a&&!b)return'-';if(a&&b)return a+' - '+b;return a||b};
+const toLDT=d=>{if(!d)return'';const x=new Date(d),p=n=>String(n).padStart(2,'0');return `${x.getFullYear()}-${p(x.getMonth()+1)}-${p(x.getDate())}T${p(x.getHours())}:${p(x.getMinutes())}`;};
+
+let pS={page:0,size:10,q:''};
+async function loadP(){
+  const r=await fetch(`${PROMO}?page=${pS.page}&size=${pS.size}${pS.q?`&q=${encodeURIComponent(pS.q)}`:''}`);
+  const d=await r.json(),b=document.getElementById('promoBody');
+  b.innerHTML='';
+  if(!d.content||!d.content.length)b.innerHTML='<tr><td colspan="9" class="text-center text-muted">Không có dữ liệu</td></tr>';
+  else d.content.forEach((p,i)=>{
+    const idx=d.pageable.pageNumber*d.size+i+1;
+    b.insertAdjacentHTML('beforeend',`<tr><td>${idx}</td><td><strong>${esc(p.name)}</strong></td><td>${dt(p.startsAt,p.endsAt)}</td><td class="text-end">${fmt(p.minOrderAmount)}</td><td class="text-end">${fmt(p.shippingDiscount)}</td><td class="text-end">${fmt(p.amountOff)}</td><td class="text-end">${pct(p.percentOff)}</td><td>${badge(p.isActive)}</td><td class="text-end"><a href="/admin/promotions/${p.id}" class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></a> <a href="javascript:void(0)" onclick="delP(${p.id})" class="btn btn-sm btn-icon btn-outline-danger"><i class="bx bx-trash"></i></a></td></tr>`);
+  });
+  const f=d.totalElements?(d.pageable.pageNumber*d.size+1):0,t=d.pageable.pageNumber*d.size+d.numberOfElements;
+  document.getElementById('promoInfo').textContent=`${f}-${t}/${d.totalElements}`;
+  document.getElementById('promoCur').textContent=`${d.pageable.pageNumber+1}/${Math.max(d.totalPages,1)}`;
+  document.getElementById('promoPrev').disabled=d.pageable.pageNumber<=0;
+  document.getElementById('promoNext').disabled=d.pageable.pageNumber>=(d.totalPages-1);
+}
+let pD;document.getElementById('searchPromo')?.addEventListener('input',e=>{clearTimeout(pD);pD=setTimeout(()=>{pS.q=e.target.value.trim();pS.page=0;loadP();},300);});
+document.getElementById('promoPrev')?.addEventListener('click',()=>{if(pS.page>0){pS.page--;loadP();}});
+document.getElementById('promoNext')?.addEventListener('click',()=>{pS.page++;loadP();});
+async function delP(id){if(!confirm('Xóa?'))return;await fetch(`${PROMO}/${id}`,{method:'DELETE'});loadP();}
+
+let cS={page:0,size:10,q:''};
+async function loadC(){
+  const r=await fetch(`${COUPON}?page=${cS.page}&size=${cS.size}${cS.q?`&q=${encodeURIComponent(cS.q)}`:''}`);
+  const d=await r.json(),b=document.getElementById('couponBody');
+  b.innerHTML='';
+  if(!d.content||!d.content.length)b.innerHTML='<tr><td colspan="9" class="text-center text-muted">Không có dữ liệu</td></tr>';
+  else d.content.forEach((c,i)=>{
+    const idx=d.pageable.pageNumber*d.size+i+1;
+    const disc=c.amountOff?fmt(c.amountOff):(c.percentOff?pct(c.percentOff):'-');
+    const use=`${c.redemptions||0}${c.maxRedemptions?'/'+c.maxRedemptions:'/∞'}`;
+    b.insertAdjacentHTML('beforeend',`<tr><td>${idx}</td><td><code>${esc(c.code)}</code></td><td>${esc(c.description||'-')}</td><td>${dt(c.startsAt,c.endsAt)}</td><td class="text-center">${use}</td><td class="text-end">${fmt(c.minOrderAmount)}</td><td class="text-end">${disc}</td><td>${badge(c.isActive)}</td><td class="text-end"><a href="javascript:void(0)" onclick="editC(${c.id})" class="btn btn-sm btn-icon btn-outline-secondary"><i class="bx bx-edit"></i></a> <a href="javascript:void(0)" onclick="delC(${c.id})" class="btn btn-sm btn-icon btn-outline-danger"><i class="bx bx-trash"></i></a></td></tr>`);
+  });
+  const f=d.totalElements?(d.pageable.pageNumber*d.size+1):0,t=d.pageable.pageNumber*d.size+d.numberOfElements;
+  document.getElementById('couponInfo').textContent=`${f}-${t}/${d.totalElements}`;
+  document.getElementById('couponCur').textContent=`${d.pageable.pageNumber+1}/${Math.max(d.totalPages,1)}`;
+  document.getElementById('couponPrev').disabled=d.pageable.pageNumber<=0;
+  document.getElementById('couponNext').disabled=d.pageable.pageNumber>=(d.totalPages-1);
+}
+let cD;document.getElementById('searchCoupon')?.addEventListener('input',e=>{clearTimeout(cD);cD=setTimeout(()=>{cS.q=e.target.value.trim();cS.page=0;loadC();},300);});
+document.getElementById('couponPrev')?.addEventListener('click',()=>{if(cS.page>0){cS.page--;loadC();}});
+document.getElementById('couponNext')?.addEventListener('click',()=>{cS.page++;loadC();});
+async function delC(id){if(!confirm('Xóa?'))return;await fetch(`${COUPON}/${id}`,{method:'DELETE'});loadC();}
+
+const cModal=new bootstrap.Modal(document.getElementById('couponModal'));
+function openCouponModal(){
+  document.getElementById('couponId').value='';
+  document.getElementById('couponModalTitle').textContent='Thêm mã giảm giá';
+  document.getElementById('couponForm').reset();
+  document.getElementById('couponActive').checked=true;
+  cModal.show();
+}
+async function editC(id){
+  const r=await fetch(`${COUPON}/${id}`);
+  const c=await r.json();
+  document.getElementById('couponId').value=c.id;
+  document.getElementById('couponModalTitle').textContent='Sửa mã giảm giá';
+  document.getElementById('couponCode').value=c.code||'';
+  document.getElementById('couponDesc').value=c.description||'';
+  document.getElementById('couponStart').value=toLDT(c.startsAt);
+  document.getElementById('couponEnd').value=toLDT(c.endsAt);
+  document.getElementById('couponMax').value=c.maxRedemptions||'';
+  document.getElementById('couponMin').value=c.minOrderAmount||'';
+  document.getElementById('couponAmt').value=c.amountOff||'';
+  document.getElementById('couponPct').value=c.percentOff||'';
+  document.getElementById('couponActive').checked=!!c.isActive;
+  cModal.show();
+}
+async function saveCoupon(){
+  const id=document.getElementById('couponId').value;
+  const payload={
+    code:document.getElementById('couponCode').value.trim(),
+    description:document.getElementById('couponDesc').value.trim()||null,
+    startsAt:document.getElementById('couponStart').value||null,
+    endsAt:document.getElementById('couponEnd').value||null,
+    maxRedemptions:document.getElementById('couponMax').value?Number(document.getElementById('couponMax').value):null,
+    minOrderAmount:document.getElementById('couponMin').value?Number(document.getElementById('couponMin').value):null,
+    amountOff:document.getElementById('couponAmt').value?Number(document.getElementById('couponAmt').value):null,
+    percentOff:document.getElementById('couponPct').value?Number(document.getElementById('couponPct').value):null,
+    isActive:document.getElementById('couponActive').checked
+  };
+  if(!payload.code){alert('Vui lòng nhập mã');return;}
+  try{
+    const r=await fetch(id?`${COUPON}/${id}`:COUPON,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    if(!r.ok)throw new Error(await r.text()||'Lỗi');
+    cModal.hide();
+    loadC();
+  }catch(e){alert(e.message||'Không lưu được');}
+}
+
+document.querySelector('[data-bs-target="#promotions"]')?.addEventListener('shown.bs.tab',loadP);
+document.querySelector('[data-bs-target="#coupons"]')?.addEventListener('shown.bs.tab',loadC);
+loadP();
+</script>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
