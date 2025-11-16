@@ -20,6 +20,53 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link th:href="@{/fe/css/bootstrap.min.css}" rel="stylesheet">
     <link th:href="@{/fe/css/style.css}" rel="stylesheet">
+    
+    <style>
+        /* Style cho dropdown user */
+        #userDropdown {
+            min-width: 200px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 0.5rem 0;
+        }
+
+        #userDropdown .dropdown-item {
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            transition: background-color 0.2s;
+        }
+
+        #userDropdown .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        #userDropdown .dropdown-item.disabled {
+            opacity: 1;
+            font-weight: 600;
+            color: #333;
+            background-color: #f8f9fa;
+            cursor: default;
+        }
+
+        #userDropdown .dropdown-item.text-danger:hover {
+            background-color: #ffebee;
+        }
+
+        #userDropdown .dropdown-divider {
+            margin: 0.5rem 0;
+        }
+
+        .dropdown-toggle::after {
+            display: none;
+        }
+        
+        /* Highlight active category */
+        .fruite-categorie a.active {
+            color: #81c408 !important;
+            font-weight: 600;
+        }
+    </style>
 </head>
 
 <body>
@@ -30,7 +77,7 @@
     <!-- Spinner End -->
 
     <!-- Navbar start -->
-    <div th:fragment="navbar" class="container-fluid fixed-top">
+    <div class="container-fluid fixed-top">
         <div class="container topbar bg-primary d-none d-lg-block">
             <div class="d-flex justify-content-between">
                 <div class="top-info ps-2">
@@ -50,110 +97,122 @@
         </div>
         
         <div class="container px-0">
-    <nav class="navbar navbar-light bg-white navbar-expand-xl">
-        <a th:href="@{/}" class="navbar-brand">
-            <h1 class="text-primary display-6">Fruitables</h1>
-        </a>
-        <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-            <span class="fa fa-bars text-primary"></span>
-        </button>
-        
-        <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
-            <div class="navbar-nav mx-auto">
-                <a th:href="@{/}" class="nav-item nav-link">
-                    <i class="fas fa-home me-1"></i> Trang chủ
+            <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                <a th:href="@{/}" class="navbar-brand">
+                    <h1 class="text-primary display-6">Fruitables</h1>
                 </a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
                 
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fas fa-store me-1"></i> Cửa hàng
-                    </a>
-                    <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                        <a th:href="@{/shop}" class="dropdown-item">
-                            <i class="fas fa-th me-2"></i> Tất cả sản phẩm
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a th:href="@{/}" class="nav-item nav-link">
+                            <i class="fas fa-home me-1"></i> Trang chủ
                         </a>
-                        <div class="dropdown-divider"></div>
-                        <div id="dynamicCategories">
-                            <a href="#" class="dropdown-item text-muted">
-                                <small>Đang tải danh mục...</small>
+                        
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">
+                                <i class="fas fa-store me-1"></i> Cửa hàng
                             </a>
+                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a th:href="@{/shop}" class="dropdown-item">
+                                    <i class="fas fa-th me-2"></i> Tất cả sản phẩm
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <div id="dynamicCategories">
+                                    <a href="#" class="dropdown-item text-muted">
+                                        <small>Đang tải danh mục...</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a th:href="@{/contact}" class="nav-item nav-link">
+                            <i class="fas fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </div>
+                    
+                    <div class="d-flex m-3 me-0">
+                        <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" 
+                                data-bs-toggle="modal" data-bs-target="#searchModal">
+                            <i class="fas fa-search text-primary"></i>
+                        </button>
+                        
+                        <a th:href="@{/cart}" class="position-relative me-4 my-auto">
+                            <i class="fa fa-shopping-bag fa-2x"></i>
+                            <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
+                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
+                        </a>
+                        
+                        <div class="dropdown my-auto">
+                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user fa-2x"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" id="userDropdown">
+                                <li class="guest-menu">
+                                    <a class="dropdown-item" href="/login">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                    </a>
+                                </li>
+                                <li class="guest-menu">
+                                    <a class="dropdown-item" href="/register">
+                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                    </a>
+                                </li>
+                                
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item disabled" href="#">
+                                        <i class="fas fa-user-circle me-2"></i>
+                                        <span id="userName">Người dùng</span>
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;"><hr class="dropdown-divider"></li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item" href="/profile">
+                                        <i class="fas fa-user-edit me-2"></i>Thông tin cá nhân
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item" href="/orders">
+                                        <i class="fas fa-shopping-cart me-2"></i>Lịch sử mua hàng
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;"><hr class="dropdown-divider"></li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item text-danger" href="#" onclick="logout(); return false;">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                
-                <a th:href="@{/contact}" class="nav-item nav-link">
-                    <i class="fas fa-envelope me-1"></i> Liên hệ
-                </a>
-            </div>
-            
-            <div class="d-flex m-3 me-0">
-                <!-- Search Button -->
-                <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" 
-                        data-bs-toggle="modal" data-bs-target="#searchModal">
-                    <i class="fas fa-search text-primary"></i>
-                </button>
-                
-                <!-- Cart -->
-                <a th:href="@{/cart}" class="position-relative me-4 my-auto">
-                    <i class="fa fa-shopping-bag fa-2x"></i>
-                    <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
-                        style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
-                </a>
-                
-                <!-- User Dropdown -->
-                <div class="dropdown my-auto">
-                    <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user fa-2x"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" id="userDropdown">
-                        <!-- Guest Menu (Chưa đăng nhập) -->
-                        <li class="guest-menu">
-                            <a class="dropdown-item" href="/login">
-                                <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
-                            </a>
-                        </li>
-                        <li class="guest-menu">
-                            <a class="dropdown-item" href="/register">
-                                <i class="fas fa-user-plus me-2"></i>Đăng ký
-                            </a>
-                        </li>
-                        
-                        <!-- Logged In Menu (Đã đăng nhập) -->
-                        <li class="user-menu" style="display: none;">
-                            <a class="dropdown-item disabled" href="#">
-                                <i class="fas fa-user-circle me-2"></i>
-                                <span id="userName">Người dùng</span>
-                            </a>
-                        </li>
-                        <li class="user-menu" style="display: none;">
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li class="user-menu" style="display: none;">
-                            <a class="dropdown-item" href="/profile">
-                                <i class="fas fa-user-edit me-2"></i>Thông tin cá nhân
-                            </a>
-                        </li>
-                        <li class="user-menu" style="display: none;">
-                            <a class="dropdown-item" href="/orders">
-                                <i class="fas fa-shopping-cart me-2"></i>Lịch sử mua hàng
-                            </a>
-                        </li>
-                        <li class="user-menu" style="display: none;">
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li class="user-menu" style="display: none;">
-                            <a class="dropdown-item text-danger" href="#" onclick="logout(); return false;">
-                                <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
-                            </a>
-                        </li>
-                    </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Modal Search Start -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content rounded-0">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Tìm kiếm sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body d-flex align-items-center">
+                    <div class="input-group w-75 mx-auto d-flex">
+                        <input type="search" id="globalSearch" class="form-control p-3" placeholder="Nhập tên sản phẩm..." aria-describedby="search-icon-1">
+                        <span id="search-icon-1" class="input-group-text p-3" onclick="performGlobalSearch()" style="cursor: pointer;">
+                            <i class="fa fa-search"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
-    </nav>
-</div>
     </div>
-    <!-- Navbar End -->
+    <!-- Modal Search End -->
 
     <!-- Single Page Header start -->
     <div class="container-fluid page-header py-5">
@@ -239,7 +298,7 @@
     <!-- Fruits Shop End-->
 
     <!-- Footer Start -->
-    <div th:fragment="footer" class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
         <div class="container py-5">
             <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5);">
                 <div class="row g-4">
@@ -309,7 +368,7 @@
     </div>
 
     <!-- Copyright -->
-    <div th:fragment="copyright" class="container-fluid copyright bg-dark py-4">
+    <div class="container-fluid copyright bg-dark py-4">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
@@ -326,6 +385,9 @@
     </div>
     <!-- Footer End -->
 
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+
     <!-- JavaScript Libraries -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -341,18 +403,34 @@
         let currentQuery = '';
         let currentCategory = '';
         
+        // Hide spinner
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.getElementById('spinner').classList.remove('show');
+            }, 100);
+        });
+        
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             loadCategories();
+            loadCategoriesDropdown();
             loadProducts();
             updateCartCount();
+            updateUserMenu();
             
             // Event Listeners
             document.getElementById('searchInput').addEventListener('input', debounce(handleSearch, 500));
             document.getElementById('sortSelect').addEventListener('change', loadProducts);
+            
+            // Enter key for global search
+            document.getElementById('globalSearch').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performGlobalSearch();
+                }
+            });
         });
         
-        // Load Categories
+        // Load Categories for sidebar
         async function loadCategories() {
             try {
                 const response = await fetch(`${API_BASE}/categories/all-min?onlyActive=true`);
@@ -362,7 +440,7 @@
                 container.innerHTML = `
                     <li>
                         <div class="d-flex justify-content-between fruite-name">
-                            <a href="#" onclick="filterByCategory(''); return false;">
+                            <a href="#" onclick="filterByCategory(''); return false;" class="${!currentCategory ? 'active' : ''}">
                                 <i class="fas fa-apple-alt me-2"></i>Tất cả
                             </a>
                         </div>
@@ -370,16 +448,39 @@
                 `;
                 
                 categories.forEach(cat => {
+                    const isActive = currentCategory == cat.id;
                     container.innerHTML += `
                         <li>
                             <div class="d-flex justify-content-between fruite-name">
-                                <a href="#" onclick="filterByCategory(${cat.id}); return false;">
+                                <a href="#" onclick="filterByCategory(${cat.id}); return false;" class="${isActive ? 'active' : ''}">
                                     <i class="fas fa-apple-alt me-2"></i>${cat.name}
                                 </a>
                             </div>
                         </li>
                     `;
                 });
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+        
+        // Load categories for dropdown
+        async function loadCategoriesDropdown() {
+            try {
+                const response = await fetch('/api/admin/categories/all-min?onlyActive=true');
+                const categories = await response.json();
+                
+                const container = document.getElementById('dynamicCategories');
+                if (categories && categories.length > 0) {
+                    container.innerHTML = '';
+                    categories.forEach(cat => {
+                        container.innerHTML += `
+                            <a href="/shop?category=${cat.id}" class="dropdown-item">
+                                <i class="fas fa-leaf me-2 text-success"></i> ${cat.name}
+                            </a>
+                        `;
+                    });
+                }
             } catch (error) {
                 console.error('Error loading categories:', error);
             }
@@ -392,6 +493,7 @@
             try {
                 let url = `${API_BASE}/products?page=${currentPage}&size=12`;
                 if (currentQuery) url += `&q=${encodeURIComponent(currentQuery)}`;
+                if (currentCategory) url += `&categoryId=${currentCategory}`;
                 
                 const response = await fetch(url);
                 const data = await response.json();
@@ -419,13 +521,18 @@
                 const price = getPriceDisplay(product);
                 const imageUrl = product.mainImageUrl || '/fe/img/fruite-item-5.jpg';
                 
+                // Lấy tên danh mục đầu tiên hoặc mặc định
+                const categoryName = product.categories && product.categories.length > 0 
+                    ? product.categories[0].name 
+                    : 'Sản phẩm';
+                
                 container.innerHTML += `
                     <div class="col-md-6 col-lg-6 col-xl-4">
                         <div class="rounded position-relative fruite-item">
                             <div class="fruite-img">
                                 <img src="${imageUrl}" class="img-fluid w-100 rounded-top" alt="${product.name}">
                             </div>
-                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">Trái cây</div>
+                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">${categoryName}</div>
                             <div class="p-4 border border-secondary border-top-0 rounded-bottom">
                                 <h4>${product.name}</h4>
                                 <p class="text-truncate">${product.shortDesc || 'Sản phẩm tươi ngon chất lượng cao'}</p>
@@ -466,25 +573,13 @@
             
             let html = '';
             
-            // Previous
-            html += `
-                <a href="#" class="rounded ${data.number === 0 ? 'disabled' : ''}" 
-                   onclick="goToPage(${data.number - 1}); return false;">&laquo;</a>
-            `;
+            html += `<a href="#" class="rounded ${data.number === 0 ? 'disabled' : ''}" onclick="goToPage(${data.number - 1}); return false;">&laquo;</a>`;
             
-            // Pages
             for (let i = 0; i < data.totalPages; i++) {
-                html += `
-                    <a href="#" class="rounded ${i === data.number ? 'active' : ''}" 
-                       onclick="goToPage(${i}); return false;">${i + 1}</a>
-                `;
+                html += `<a href="#" class="rounded ${i === data.number ? 'active' : ''}" onclick="goToPage(${i}); return false;">${i + 1}</a>`;
             }
             
-            // Next
-            html += `
-                <a href="#" class="rounded ${data.number === data.totalPages - 1 ? 'disabled' : ''}" 
-                   onclick="goToPage(${data.number + 1}); return false;">&raquo;</a>
-            `;
+            html += `<a href="#" class="rounded ${data.number === data.totalPages - 1 ? 'disabled' : ''}" onclick="goToPage(${data.number + 1}); return false;">&raquo;</a>`;
             
             container.innerHTML = html;
         }
@@ -500,6 +595,7 @@
             currentCategory = categoryId;
             currentPage = 0;
             loadProducts();
+            loadCategories(); // Refresh để highlight category active
         }
         
         function goToPage(page) {
@@ -508,6 +604,21 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
         
+        function performGlobalSearch() {
+            const searchInput = document.getElementById('globalSearch');
+            if (searchInput && searchInput.value.trim()) {
+                currentQuery = searchInput.value.trim();
+                currentPage = 0;
+                loadProducts();
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('searchModal'));
+                if (modal) modal.hide();
+                
+                // Update search input
+                document.getElementById('searchInput').value = currentQuery;
+            }
+        }
         // Utilities
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
@@ -532,150 +643,40 @@
         function updateCartCount() {
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-            document.getElementById('cartCount').textContent = count;
+            const cartCountEl = document.getElementById('cartCount');
+            if (cartCountEl) {
+                cartCountEl.textContent = count;
+            }
+        }
+        
+        // Update user menu
+        function updateUserMenu() {
+            const user = JSON.parse(localStorage.getItem('user') || 'null');
+            
+            const guestMenuItems = document.querySelectorAll('.guest-menu');
+            const userMenuItems = document.querySelectorAll('.user-menu');
+            
+            if (user && user.email) {
+                guestMenuItems.forEach(item => item.style.display = 'none');
+                userMenuItems.forEach(item => item.style.display = 'block');
+                
+                const userName = document.getElementById('userName');
+                if (userName) {
+                    userName.textContent = user.fullName || user.email;
+                }
+            } else {
+                guestMenuItems.forEach(item => item.style.display = 'block');
+                userMenuItems.forEach(item => item.style.display = 'none');
+            }
+        }
+        
+        // Logout function
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('user');
+                window.location.href = '/';
+            }
         }
     </script>
-    <script th:fragment="navbar-script">
-    // Load categories for dropdown
-    async function loadCategoriesDropdown() {
-        try {
-            const response = await fetch('/api/admin/categories/all-min?onlyActive=true');
-            const categories = await response.json();
-            
-            const container = document.getElementById('dynamicCategories');
-            if (categories && categories.length > 0) {
-                container.innerHTML = '';
-                categories.forEach(cat => {
-                    container.innerHTML += `
-                        <a href="/shop?category=${cat.id}" class="dropdown-item">
-                            <i class="fas fa-leaf me-2 text-success"></i> ${cat.name}
-                        </a>
-                    `;
-                });
-            } else {
-                container.innerHTML = '<a href="#" class="dropdown-item text-muted"><small>Chưa có danh mục</small></a>';
-            }
-        } catch (error) {
-            console.error('Error loading categories:', error);
-        }
-    }
-    
-    // Update cart count
-    function updateCartCount() {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-        const cartCountEl = document.getElementById('cartCount');
-        if (cartCountEl) {
-            cartCountEl.textContent = count;
-        }
-    }
-    
-    // Global search
-    function performSearch() {
-        const searchInput = document.getElementById('globalSearch');
-        if (searchInput && searchInput.value.trim()) {
-            window.location.href = `/shop?q=${encodeURIComponent(searchInput.value.trim())}`;
-        }
-    }
-    
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        loadCategoriesDropdown();
-        updateCartCount();
-        
-        // Enter key for search
-        const searchInput = document.getElementById('globalSearch');
-        if (searchInput) {
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-        }
-    });
-</script>
-<script>
-// Check user login status and update dropdown
-function updateUserMenu() {
-    // Kiểm tra xem user đã đăng nhập chưa (ví dụ từ localStorage hoặc session)
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
-    
-    const guestMenuItems = document.querySelectorAll('.guest-menu');
-    const userMenuItems = document.querySelectorAll('.user-menu');
-    
-    if (user && user.email) {
-        // Đã đăng nhập - Hiện menu user, ẩn menu guest
-        guestMenuItems.forEach(item => item.style.display = 'none');
-        userMenuItems.forEach(item => item.style.display = 'block');
-        
-        // Cập nhật tên user
-        const userName = document.getElementById('userName');
-        if (userName) {
-            userName.textContent = user.fullName || user.email;
-        }
-    } else {
-        // Chưa đăng nhập - Hiện menu guest, ẩn menu user
-        guestMenuItems.forEach(item => item.style.display = 'block');
-        userMenuItems.forEach(item => item.style.display = 'none');
-    }
-}
-
-// Logout function
-function logout() {
-    if (confirm('Bạn có chắc muốn đăng xuất?')) {
-        // Xóa thông tin user
-        localStorage.removeItem('user');
-        
-        // Redirect về trang chủ
-        window.location.href = '/';
-    }
-}
-
-// Load user menu khi trang load
-document.addEventListener('DOMContentLoaded', function() {
-    updateUserMenu();
-});
-</script>
-
-<style>
-/* Style cho dropdown user */
-#userDropdown {
-    min-width: 200px;
-    border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-radius: 8px;
-    padding: 0.5rem 0;
-}
-
-#userDropdown .dropdown-item {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.95rem;
-    transition: background-color 0.2s;
-}
-
-#userDropdown .dropdown-item:hover {
-    background-color: #f8f9fa;
-}
-
-#userDropdown .dropdown-item.disabled {
-    opacity: 1;
-    font-weight: 600;
-    color: #333;
-    background-color: #f8f9fa;
-    cursor: default;
-}
-
-#userDropdown .dropdown-item.text-danger:hover {
-    background-color: #ffebee;
-}
-
-#userDropdown .dropdown-divider {
-    margin: 0.5rem 0;
-}
-
-.dropdown-toggle::after {
-    display: none; /* Ẩn mũi tên dropdown mặc định */
-}
-</style>
 </body>
 </html>

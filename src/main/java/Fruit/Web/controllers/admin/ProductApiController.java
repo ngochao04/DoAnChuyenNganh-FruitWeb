@@ -2,7 +2,10 @@ package Fruit.Web.controllers.admin;
 
 import Fruit.Web.models.Category;
 import Fruit.Web.models.Product;
+import Fruit.Web.repositories.ProductRepository;
 import Fruit.Web.services.ProductService;
+
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +18,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/admin/products")
 public class ProductApiController {
   private final ProductService service;
-  public ProductApiController(ProductService service){ this.service = service; }
+  private final ProductRepository productRepository;
+
+  public ProductApiController(ProductService service,ProductRepository productRepository){ this.service = service;
+  this.productRepository = productRepository; }
 
   // ===== DTO nhận từ FE =====
   public static class ProductPayload {
@@ -143,4 +149,27 @@ public Map<String, Object> get(@PathVariable Long id) {
 
   @DeleteMapping("/{id}")
   public void delete(@PathVariable Long id){ service.delete(id); }
+
+  @GetMapping
+  public Page<Product> getProducts(
+          @RequestParam(defaultValue = "0") int page,
+          @RequestParam(defaultValue = "10") int size,
+          @RequestParam(required = false) String q,
+          @RequestParam(required = false) Long categoryId) { // ← THÊM PARAM NÀY
+      
+      Pageable pageable = PageRequest.of(page, size);
+      
+      // Nếu có categoryId, filter theo category
+      if (categoryId != null) {
+          return productRepository.findByCategoryId(categoryId, pageable);
+      }
+      
+      // Nếu có search query
+      if (q != null && !q.trim().isEmpty()) {
+          return productRepository.findByNameContainingIgnoreCase(q, pageable);
+      }
+      
+      // Trả về tất cả
+      return productRepository.findAll(pageable);
+  }
 }
