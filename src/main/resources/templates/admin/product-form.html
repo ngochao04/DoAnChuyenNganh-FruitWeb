@@ -207,9 +207,9 @@
                   <div class="mb-3">
                     <label for="categories" class="form-label">Danh mục (có thể chọn nhiều)</label>
                     <select id="prodCats" class="form-select" multiple size="8">
-                      <option th:each="c : ${allCategories}"
-                              th:value="${c.id}"
-                              th:text="${c.name}"></option>
+                        <option th:each="c : ${allCategories}"
+                                th:value="${c.id}"
+                                th:text="${c.name}"></option>
                     </select>
                     <div class="form-hint">Giữ Ctrl/Cmd để chọn nhiều.</div>
                   </div>
@@ -324,19 +324,28 @@
   // Load categories (onlyActive = true để khớp list)
   async function loadCategories(preselectIds = []) {
     if (!catSelect) return;
-    try {
-      const res = await fetch('/api/admin/categories/all-min?onlyActive=true');
-      if (!res.ok) throw new Error('Load categories failed');
-      const cats = await res.json();
-      catSelect.innerHTML = cats.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-
-      if (Array.isArray(preselectIds) && preselectIds.length) {
-        const set = new Set(preselectIds.map(Number));
-        [...catSelect.options].forEach(opt => opt.selected = set.has(Number(opt.value)));
+    
+      if (catSelect.options.length === 0) {
+      try {
+        const res = await fetch('/api/admin/categories/all-min?onlyActive=true');
+        if (!res.ok) throw new Error('Load categories failed');
+        const cats = await res.json();
+        catSelect.innerHTML = cats.map(c => 
+          `<option value="${c.id}">${c.name}</option>`
+        ).join('');
+      } catch (e) {
+        console.error(e);
+        catSelect.innerHTML = '<option disabled>Không tải được danh mục</option>';
+        return;
       }
-    } catch (e) {
-      console.error(e);
-      catSelect.innerHTML = '<option disabled>Không tải được danh mục</option>';
+    }
+    
+    // ✅ PRESELECT (cho edit mode)
+    if (Array.isArray(preselectIds) && preselectIds.length) {
+      const set = new Set(preselectIds.map(Number));
+      [...catSelect.options].forEach(opt => 
+        opt.selected = set.has(Number(opt.value))
+      );
     }
   }
 

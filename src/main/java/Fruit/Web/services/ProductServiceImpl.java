@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import java.time.OffsetDateTime;
 import java.util.HashSet;
@@ -53,13 +55,29 @@ public class ProductServiceImpl implements ProductService {
     in.setCreatedAt(OffsetDateTime.now());
     in.setUpdatedAt(OffsetDateTime.now());
 
-    // Bind danh mục nếu client gửi kèm (categories chỉ cần id)
-    bindCategoriesIfPresent(in, null);
+    // ✅ LOG TRƯỚC KHI REPLACE
+    System.out.println("=== CREATE PRODUCT ===");
+    System.out.println("Categories trước khi replace: " + in.getCategories().size());
+    in.getCategories().forEach(c -> 
+        System.out.println("  - ID: " + c.getId() + ", Name: " + c.getName())
+    );
 
-    // KHÔNG động tới variants/images ở bước tạo qua form sản phẩm cơ bản
-    // (chúng do module Biến thể & Kho quản lý)
+    // ✅ FIX: Replace category IDs với managed entities TRƯỚC KHI SAVE
+    replaceWithManagedCategories(in);
 
-    return repo.save(in);
+    // ✅ LOG SAU KHI REPLACE
+    System.out.println("Categories sau khi replace: " + in.getCategories().size());
+    in.getCategories().forEach(c -> 
+        System.out.println("  - ID: " + c.getId() + ", Name: " + c.getName())
+    );
+
+    Product saved = repo.save(in);
+    
+    // ✅ LOG SAU KHI SAVE
+    System.out.println("Categories sau khi save: " + saved.getCategories().size());
+    System.out.println("======================");
+    
+    return saved;
   }
 
   @Transactional
@@ -87,7 +105,9 @@ public class ProductServiceImpl implements ProductService {
     db.setBaseCompareAtPrice(in.getBaseCompareAtPrice());
     db.setBaseStockQty(in.getBaseStockQty() == null ? 0 : in.getBaseStockQty());
     
-    bindCategoriesIfPresent(in, db);
+    // ✅ FIX: Update categories
+    updateCategories(db, in.getCategories());
+    
     db.setUpdatedAt(OffsetDateTime.now());
     return repo.save(db);
   }
@@ -107,22 +127,65 @@ public class ProductServiceImpl implements ProductService {
   }
 
   /**
-   * Bind danh mục:
-   * - Nếu src.getCategories() == null -> bỏ qua (không thay đổi danh mục hiện có)
-   * - Nếu có -> thay thế toàn bộ bằng danh mục từ id được gửi lên.
+   * ✅ PHƯƠNG PHÁP MỚI: Replace categories chỉ có ID với managed entities
+   * Dùng cho cả CREATE và UPDATE
    */
-  private void bindCategoriesIfPresent(Product src, Product owner) {
-    if (src.getCategories() == null) return; // client không gửi -> giữ nguyên
-
-    Product target = (owner != null ? owner : src);
-    // thay bằng set mới theo id
-    Set<Category> newCats = new HashSet<>();
-    for (Category c : src.getCategories()) {
-      if (c != null && c.getId() != null) {
-        newCats.add(catRepo.findById(c.getId()).orElseThrow(NoSuchElementException::new));
-      }
+  private void replaceWithManagedCategories(Product product) {
+    if (product.getCategories() == null || product.getCategories().isEmpty()) {
+      return; // Không có category nào
     }
-    target.getCategories().clear();
-    target.getCategories().addAll(newCats);
+
+    // Lấy danh sách ID từ categories hiện tại (chỉ có id, chưa managed)
+    Set<Long> categoryIds = product.getCategories().stream()
+        .filter(c -> c != null && c.getId() != null)
+        .map(Category::getId)
+        .collect(Collectors.toSet());
+
+    // Clear tất cả
+    product.getCategories().clear();
+
+    // Fetch managed entities từ DB và add vào
+    if (!categoryIds.isEmpty()) {
+      List<Category> managedCategories = catRepo.findAllById(categoryIds);
+      
+      if (managedCategories.size() != categoryIds.size()) {
+        throw new NoSuchElementException("Một số category không tồn tại");
+      }
+      
+      product.getCategories().addAll(managedCategories);
+    }
+  }
+
+  /**
+   * ✅ DEPRECATED - Không dùng nữa
+   */
+  private void bindCategoriesIfPresent(Product product) {
+    replaceWithManagedCategories(product);
+  }
+
+  /**
+   * ✅ Update categories cho UPDATE - đơn giản hơn
+   */
+  private void updateCategories(Product product, Set<Category> newCategories) {
+    if (newCategories == null) {
+      return; // Không thay đổi
+    }
+
+    // Lấy IDs từ newCategories
+    Set<Long> newIds = newCategories.stream()
+        .filter(c -> c != null && c.getId() != null)
+        .map(Category::getId)
+        .collect(Collectors.toSet());
+
+    // Clear và add managed entities
+    product.getCategories().clear();
+    
+    if (!newIds.isEmpty()) {
+      List<Category> managed = catRepo.findAllById(newIds);
+      if (managed.size() != newIds.size()) {
+        throw new NoSuchElementException("Một số category không tồn tại");
+      }
+      product.getCategories().addAll(managed);
+    }
   }
 }
