@@ -242,6 +242,7 @@
 
 <!-- Page JS -->
 <script>
+// Thay thế toàn bộ <script> tag trong product-form.html bằng code này:
 (() => {
   const API = '/api/admin/products';
   const $ = (id) => document.getElementById(id);
@@ -258,16 +259,11 @@
   const prodActive   = $('prodActive');
   const form         = $('productForm');
 
-  // ====== GIÁ & TỒN KHO GỐC (id phải đúng với input) ======
-  const basePrice          = $('basePrice');           // number
-  const baseCompareAtPrice = $('baseCompareAtPrice');  // number
-  const baseStockQty       = $('baseStockQty');        // number
-
-  // <select multiple> danh mục
-  const catSelect = $('prodCats');
-
-  // Upload ảnh
-  const mainImageFile = $('mainImageFile');
+  const basePrice          = $('basePrice');
+  const baseCompareAtPrice = $('baseCompareAtPrice');
+  const baseStockQty       = $('baseStockQty');
+  const catSelect          = $('prodCats');
+  const mainImageFile      = $('mainImageFile');
 
   // ================== Helpers ==================
   const slugify = (s) => s.toString().toLowerCase()
@@ -297,7 +293,7 @@
     fd.append('file', file);
     const r = await fetch('/api/admin/uploads', { method: 'POST', body: fd });
     if (!r.ok) throw new Error(await r.text() || 'Upload thất bại');
-    const data = await r.json(); // { url, ... }
+    const data = await r.json();
     return data.url;
   }
 
@@ -321,11 +317,12 @@
     }
   });
 
-  // Load categories (onlyActive = true để khớp list)
+  // Load categories - CHỈ LOAD NẾU DROPDOWN RỖNG
   async function loadCategories(preselectIds = []) {
     if (!catSelect) return;
     
-      if (catSelect.options.length === 0) {
+    // Nếu Thymeleaf đã render options rồi thì không load lại
+    if (catSelect.options.length === 0) {
       try {
         const res = await fetch('/api/admin/categories/all-min?onlyActive=true');
         if (!res.ok) throw new Error('Load categories failed');
@@ -340,7 +337,7 @@
       }
     }
     
-    // ✅ PRESELECT (cho edit mode)
+    // Preselect categories (cho edit mode)
     if (Array.isArray(preselectIds) && preselectIds.length) {
       const set = new Set(preselectIds.map(Number));
       [...catSelect.options].forEach(opt => 
@@ -368,7 +365,6 @@
         mainImageUrl.value  = p.mainImageUrl ?? '';
         prodActive.checked  = !!p.active;
 
-        // --- GIÁ & TỒN KHO GỐC ---
         basePrice.value          = (p.basePrice != null ? p.basePrice : '');
         baseCompareAtPrice.value = (p.baseCompareAtPrice != null ? p.baseCompareAtPrice : '');
         baseStockQty.value       = (p.baseStockQty != null ? p.baseStockQty : 0);
@@ -387,6 +383,7 @@
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // ✅ FIX: Gửi categoryIds thay vì categories
     const payload = {
       name:         prodName.value.trim(),
       slug:         (prodSlug.value.trim() || slugify(prodName.value.trim())),
@@ -396,15 +393,21 @@
       longDesc:     longDesc.value.trim()        || null,
       mainImageUrl: mainImageUrl.value.trim()    || null,
       active:       !!prodActive.checked,
-      categories:   getSelectedCategoryIds().map(id => ({ id })),
 
-      // --- GIÁ & TỒN KHO GỐC gửi lên backend ---
+      // ✅ ĐÚNG: Gửi array of IDs
+      categoryIds:  getSelectedCategoryIds(),
+
       basePrice:          basePrice.value ? Number(basePrice.value) : null,
       baseCompareAtPrice: baseCompareAtPrice.value ? Number(baseCompareAtPrice.value) : null,
       baseStockQty:       baseStockQty.value ? Number(baseStockQty.value) : 0
     };
 
     if (!payload.name) { alert('Vui lòng nhập tên sản phẩm'); return; }
+
+    // ✅ LOG để debug
+    console.log('=== SENDING PAYLOAD ===');
+    console.log('categoryIds:', payload.categoryIds);
+    console.log('Full payload:', JSON.stringify(payload, null, 2));
 
     try {
       const method = id ? 'PUT' : 'POST';
@@ -416,9 +419,15 @@
         body: JSON.stringify(payload)
       });
 
-      if (!res.ok) throw new Error(await res.text() || 'Lỗi khi lưu sản phẩm');
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('Server error:', errorText);
+        throw new Error(errorText || 'Lỗi khi lưu sản phẩm');
+      }
+      
       window.location.href = '/admin/products';
     } catch (err) {
+      console.error('Submit error:', err);
       alert(err.message || 'Không lưu được sản phẩm');
     }
   });

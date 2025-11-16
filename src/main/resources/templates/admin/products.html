@@ -116,8 +116,9 @@
                             <th>Giá</th>
                             <th>Tồn kho</th>
                             <th>Cập nhật</th>
-                            <th>Trạng thái</th>
                             <th class="text-end actions" style="width:160px">Hành động</th>
+                            <th>Trạng thái</th>
+                            
                           </tr>
                         </thead>
                         <tbody class="table-border-bottom-0" id="prodBody"></tbody>
@@ -214,7 +215,6 @@ function priceCell(p){
             <td>${priceCell(p)}</td>
             <td>${p.stockTotal ?? 0}</td>
             <td>${whenUpdated(p)}</td>
-            <td>${badge(p.active)}</td>
             <td class="text-end actions">
               <div class="dropdown">
                 <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
@@ -234,6 +234,8 @@ function priceCell(p){
                 </div>
               </div>
             </td>
+            <td>${badge(p.active)}</td>
+            
           </tr>`);
       });
     }
