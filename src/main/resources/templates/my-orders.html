@@ -331,6 +331,28 @@
         document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
 
         loadOrders();
+        function updateUserMenu() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    const guestMenuItems = document.querySelectorAll('.guest-menu');
+    const userMenuItems = document.querySelectorAll('.user-menu');
+    
+    if (user && user.email) {
+        guestMenuItems.forEach(item => item.style.display = 'none');
+        userMenuItems.forEach(item => item.style.display = 'block');
+        
+        const userName = document.getElementById('userName');
+        if (userName) {
+            userName.textContent = user.fullName || user.email;
+        }
+    } else {
+        guestMenuItems.forEach(item => item.style.display = 'block');
+        userMenuItems.forEach(item => item.style.display = 'none');
+    }
+}
+
+// Call after checking login
+updateUserMenu();
     </script>
 </body>
 </html>

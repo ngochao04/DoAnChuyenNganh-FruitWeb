@@ -585,6 +585,48 @@
     if (id) openOrderModal(id);
   });
 
+  // ✅ THÊM FUNCTION NÀY
+async function updateOrderStatus(orderId, newStatus) {
+    const statusLabels = {
+        'CONFIRMED': 'Xác nhận',
+        'SHIPPED': 'Đã gửi hàng',
+        'COMPLETED': 'Hoàn thành',
+        'CANCELLED': 'Hủy'
+    };
+    
+    const action = statusLabels[newStatus] || newStatus;
+    
+    if (!confirm(`Bạn có chắc muốn ${action.toLowerCase()} đơn hàng này?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update status');
+        }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(result.message || 'Đã cập nhật trạng thái');
+            load(); // Reload danh sách
+        } else {
+            alert(result.message || 'Không thể cập nhật trạng thái');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Lỗi khi cập nhật trạng thái');
+    }
+}
   // init
   load();
 })();

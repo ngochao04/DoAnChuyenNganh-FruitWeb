@@ -387,22 +387,62 @@
         }
 
         async function cancelOrder(orderId) {
-            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) return;
-            
-            try {
-                // TODO: Implement cancel order API
-                alert('Chức năng hủy đơn hàng đang được phát triển');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Không thể hủy đơn hàng');
+    if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) return;
+    
+    try {
+        const response = await fetch(`/api/orders/${orderId}/cancel`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
             }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to cancel order');
         }
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert(result.message || 'Đã hủy đơn hàng thành công');
+            location.reload(); // Reload để cập nhật trạng thái
+        } else {
+            alert(result.message || 'Không thể hủy đơn hàng');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
+    }
+}
 
         // Update cart count
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
         document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
 
         loadOrderDetail();
+        function updateUserMenu() {
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    
+    const guestMenuItems = document.querySelectorAll('.guest-menu');
+    const userMenuItems = document.querySelectorAll('.user-menu');
+    
+    if (user && user.email) {
+        guestMenuItems.forEach(item => item.style.display = 'none');
+        userMenuItems.forEach(item => item.style.display = 'block');
+        
+        const userName = document.getElementById('userName');
+        if (userName) {
+            userName.textContent = user.fullName || user.email;
+        }
+    } else {
+        guestMenuItems.forEach(item => item.style.display = 'block');
+        userMenuItems.forEach(item => item.style.display = 'none');
+    }
+}
+
+// Call after checking login
+updateUserMenu();
     </script>
 </body>
 </html>

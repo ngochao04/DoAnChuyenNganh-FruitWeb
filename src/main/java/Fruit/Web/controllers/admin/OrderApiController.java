@@ -6,6 +6,7 @@ import Fruit.Web.models.OrderStatus;
 import Fruit.Web.models.PaymentMethod;
 import Fruit.Web.models.PaymentStatus;
 import Fruit.Web.models.ProductVariant;
+import Fruit.Web.repositories.OrderRepository;
 import Fruit.Web.services.OrderService;
 import Fruit.Web.services.dto.CreateOrderRequest;
 
@@ -24,9 +25,11 @@ import java.util.stream.Collectors;
 public class OrderApiController {
 
     private final OrderService orderService;
+    private final OrderRepository orderRepo;
 
-    public OrderApiController(OrderService orderService) {
+    public OrderApiController(OrderService orderService,OrderRepository orderRepo) {
         this.orderService = orderService;
+        this.orderRepo = orderRepo;
     }
 
     // =================== LIST ĐƠN HÀNG (TRANG ADMIN) ===================
@@ -192,4 +195,71 @@ public class OrderApiController {
             default:       return ps.name();
         }
     }
+
+    // =================== CẬP NHẬT TRẠNG THÁI ĐƠN HÀNG ===================
+@PatchMapping("/{id}/status")
+public Map<String, Object> updateOrderStatus(
+        @PathVariable Long id,
+        @RequestBody Map<String, String> payload
+) {
+    String newStatus = payload.get("status");
+    if (newStatus == null || newStatus.trim().isEmpty()) {
+        throw new IllegalArgumentException("Missing status field");
+    }
+
+    Order order = orderService.getOrder(id);
+    
+    try {
+        OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
+        order.setStatus(status);
+        
+        // Nếu đơn hàng được xác nhận, cập nhật payment status
+        if (status == OrderStatus.CONFIRMED && order.getPaymentMethod() == PaymentMethod.COD) {
+            // COD vẫn để UNPAID cho đến khi giao hàng
+        } else if (status == OrderStatus.COMPLETED) {
+            order.setPaymentStatus(PaymentStatus.PAID);
+        } else if (status == OrderStatus.CANCELLED) {
+            // TODO: Hoàn lại tồn kho nếu cần
+        }
+        
+        orderRepo.save(order);
+        
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("success", true);
+        result.put("message", "Đã cập nhật trạng thái đơn hàng");
+        result.put("order", get(id));
+        
+        return result;
+        
+    } catch (IllegalArgumentException e) {
+        throw new IllegalArgumentException("Invalid status: " + newStatus);
+    }
+}
+
+// =================== HỦY ĐƠN HÀNG (USER) ===================
+@PatchMapping("/{id}/cancel")
+public Map<String, Object> cancelOrder(@PathVariable Long id) {
+    Order order = orderService.getOrder(id);
+    
+    // Chỉ cho phép hủy đơn PENDING hoặc CONFIRMED
+    if (order.getStatus() != OrderStatus.PENDING && 
+        order.getStatus() != OrderStatus.CONFIRMED) {
+        Map<String, Object> error = new LinkedHashMap<>();
+        error.put("success", false);
+        error.put("message", "Không thể hủy đơn hàng ở trạng thái này");
+        return error;
+    }
+    
+    order.setStatus(OrderStatus.CANCELLED);
+    orderRepo.save(order);
+    
+    // TODO: Hoàn lại tồn kho
+    
+    Map<String, Object> result = new LinkedHashMap<>();
+    result.put("success", true);
+    result.put("message", "Đã hủy đơn hàng thành công");
+    result.put("order", get(id));
+    
+    return result;
+}
 }
