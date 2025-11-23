@@ -16,10 +16,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
+    // ✅ FIX: Cho phép users không có role vẫn hiển thị
     @Query("SELECT DISTINCT u FROM User u " +
-           "JOIN UserRole ur ON ur.userId = u.id " +
-           "JOIN Role r ON r.id = ur.roleId " +
-           "WHERE r.code = 'CUSTOMER' AND " +
+           "LEFT JOIN UserRole ur ON ur.userId = u.id " +
+           "LEFT JOIN Role r ON r.id = ur.roleId " +
+           "WHERE (r.code IS NULL OR r.code = 'CUSTOMER') AND " +
            "(:q IS NULL OR :q = '' OR " +
            "LOWER(u.fullName) LIKE LOWER(CONCAT('%', :q, '%')) OR " +
            "LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%')) OR " +

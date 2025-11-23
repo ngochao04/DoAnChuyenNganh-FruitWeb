@@ -1,7 +1,11 @@
 package Fruit.Web.controllers;
 
+import Fruit.Web.models.Role;
 import Fruit.Web.models.User;
+import Fruit.Web.models.UserRole;
+import Fruit.Web.repositories.RoleRepository;
 import Fruit.Web.repositories.UserRepository;
+import Fruit.Web.repositories.UserRoleRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +22,19 @@ import java.util.UUID;
 public class AuthApiController {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserRoleRepository userRoleRepository;
 
-    public AuthApiController(UserRepository userRepository) {
+    public AuthApiController(UserRepository userRepository, 
+                           RoleRepository roleRepository,
+                           UserRoleRepository userRoleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.userRoleRepository = userRoleRepository;
     }
 
     /**
-     * ✅ ĐĂNG KÝ TÀI KHOẢN MỚI
+     * ✅ ĐĂNG KÝ TÀI KHOẢN MỚI - ĐÃ SỬA
      */
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest request) {
@@ -60,14 +70,36 @@ public class AuthApiController {
         User user = new User();
         user.setFullName(request.fullName.trim());
         user.setEmail(request.email.toLowerCase().trim());
-        user.setPasswordHash(hashPassword(request.password)); // Simple hash (nên dùng BCrypt trong production)
+        user.setPasswordHash(hashPassword(request.password));
         user.setPhone(request.phone != null ? request.phone.trim() : "");
         user.setIsActive(true);
         user.setEmailVerified(false);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
 
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // ✅ TỰ ĐỘNG GÁN ROLE CUSTOMER
+        try {
+            Role customerRole = roleRepository.findByCode("CUSTOMER")
+                .orElseGet(() -> {
+                    // Nếu chưa có role CUSTOMER, tạo mới
+                    Role newRole = new Role();
+                    newRole.setCode("CUSTOMER");
+                    newRole.setName("Khách hàng");
+                    return roleRepository.save(newRole);
+                });
+            
+            UserRole userRole = new UserRole();
+            userRole.setUserId(savedUser.getId());
+            userRole.setRoleId(customerRole.getId());
+            userRoleRepository.save(userRole);
+            
+            System.out.println("✅ Assigned CUSTOMER role to user: " + savedUser.getEmail());
+        } catch (Exception e) {
+            System.err.println("⚠️ Failed to assign role, but user created: " + e.getMessage());
+            e.printStackTrace();
+        }
 
         // Tạo token đơn giản (trong production nên dùng JWT)
         String token = "TOKEN_" + UUID.randomUUID().toString();
@@ -76,10 +108,10 @@ public class AuthApiController {
         response.put("message", "Đăng ký thành công");
         response.put("token", token);
         response.put("user", Map.of(
-                "id", user.getId(),
-                "fullName", user.getFullName(),
-                "email", user.getEmail(),
-                "phone", user.getPhone() != null ? user.getPhone() : ""
+                "id", savedUser.getId(),
+                "fullName", savedUser.getFullName(),
+                "email", savedUser.getEmail(),
+                "phone", savedUser.getPhone() != null ? savedUser.getPhone() : ""
         ));
 
         return ResponseEntity.ok(response);
