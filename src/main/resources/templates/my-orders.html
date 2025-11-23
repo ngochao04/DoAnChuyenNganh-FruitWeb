@@ -31,11 +31,11 @@
             font-size: 0.85rem;
             font-weight: 600;
         }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-confirmed { background: #d1ecf1; color: #0c5460; }
-        .status-shipped { background: #cce5ff; color: #004085; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .status-PENDING { background: #fff3cd; color: #856404; }
+        .status-CONFIRMED { background: #d1ecf1; color: #0c5460; }
+        .status-SHIPPED { background: #cce5ff; color: #004085; }
+        .status-COMPLETED { background: #d4edda; color: #155724; }
+        .status-CANCELLED { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 
@@ -45,7 +45,7 @@
         <div class="spinner-grow text-primary" role="status"></div>
     </div>
 
-    <!-- Navbar (same as other pages) -->
+    <!-- Navbar -->
     <div class="container-fluid fixed-top">
         <div class="container topbar bg-primary d-none d-lg-block">
             <div class="d-flex justify-content-between">
@@ -53,6 +53,14 @@
                     <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> 
                         <a href="#" class="text-white">123 Đường ABC, TP.HCM</a>
                     </small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i>
+                        <a href="#" class="text-white">contact@fruitables.vn</a>
+                    </small>
+                </div>
+                <div class="top-link pe-2">
+                    <a href="#" class="text-white"><small class="text-white mx-2">Chính sách bảo mật</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white mx-2">Điều khoản</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white ms-2">Chính sách đổi trả</small></a>
                 </div>
             </div>
         </div>
@@ -71,15 +79,35 @@
                         <a th:href="@{/}" class="nav-item nav-link">
                             <i class="fas fa-home me-1"></i> Trang chủ
                         </a>
-                        <a th:href="@{/shop}" class="nav-item nav-link">
-                            <i class="fas fa-store me-1"></i> Cửa hàng
-                        </a>
+                        
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">
+                                <i class="fas fa-store me-1"></i> Cửa hàng
+                            </a>
+                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a th:href="@{/shop}" class="dropdown-item">
+                                    <i class="fas fa-th me-2"></i> Tất cả sản phẩm
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <div id="dynamicCategories">
+                                    <a href="#" class="dropdown-item text-muted">
+                                        <small>Đang tải danh mục...</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
                         <a th:href="@{/contact}" class="nav-item nav-link">
                             <i class="fas fa-envelope me-1"></i> Liên hệ
                         </a>
                     </div>
                     
                     <div class="d-flex m-3 me-0">
+                        <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" 
+                                data-bs-toggle="modal" data-bs-target="#searchModal">
+                            <i class="fas fa-search text-primary"></i>
+                        </button>
+                        
                         <a th:href="@{/cart}" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
@@ -87,14 +115,44 @@
                         </a>
                         
                         <div class="dropdown my-auto">
-                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">
+                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-user fa-2x"></i>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="/profile"><i class="fas fa-user-edit me-2"></i>Thông tin</a></li>
-                                <li><a class="dropdown-item" href="/orders"><i class="fas fa-shopping-cart me-2"></i>Đơn hàng</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end" id="userDropdown">
+                                <li class="guest-menu">
+                                    <a class="dropdown-item" href="/login">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                    </a>
+                                </li>
+                                <li class="guest-menu">
+                                    <a class="dropdown-item" href="/register">
+                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                    </a>
+                                </li>
+                                
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item disabled" href="#">
+                                        <i class="fas fa-user-circle me-2"></i>
+                                        <span id="userName">Người dùng</span>
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;"><hr class="dropdown-divider"></li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item" href="/profile">
+                                        <i class="fas fa-user-edit me-2"></i>Thông tin cá nhân
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item" href="/orders">
+                                        <i class="fas fa-shopping-cart me-2"></i>Lịch sử mua hàng
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;"><hr class="dropdown-divider"></li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item text-danger" href="#" onclick="logout(); return false;">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -164,7 +222,7 @@
 
         // Check login
         const user = JSON.parse(localStorage.getItem('user') || 'null');
-        if (!user) {
+        if (!user || !user.id) {
             alert('Vui lòng đăng nhập!');
             window.location.href = '/login';
         }
@@ -172,12 +230,92 @@
         // Load orders
         async function loadOrders() {
             try {
-                // TODO: Replace with actual API call using user.id
-                // For now, show empty state
-                document.getElementById('emptyState').style.display = 'block';
+                console.log('📦 Loading orders for user:', user.id);
+                
+                const response = await fetch(`/api/orders/user/${user.id}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load orders');
+                }
+                
+                const orders = await response.json();
+                console.log('📦 Orders loaded:', orders);
+                
+                const ordersList = document.getElementById('ordersList');
+                const emptyState = document.getElementById('emptyState');
+                
+                if (!orders || orders.length === 0) {
+                    emptyState.style.display = 'block';
+                    ordersList.innerHTML = '';
+                    return;
+                }
+                
+                emptyState.style.display = 'none';
+                ordersList.innerHTML = '';
+                
+                orders.forEach(order => {
+                    const card = document.createElement('div');
+                    card.className = 'order-card';
+                    card.innerHTML = `
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <strong>Mã đơn:</strong><br>
+                                <span class="text-primary">${order.orderNo}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Ngày đặt:</strong><br>
+                                ${formatDate(order.createdAt)}
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Sản phẩm:</strong><br>
+                                ${order.itemCount} món
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Tổng tiền:</strong><br>
+                                <span class="text-success fw-bold">${formatPrice(order.grandTotal)}</span>
+                            </div>
+                            <div class="col-md-2">
+                                <span class="status-badge status-${order.status}">
+                                    ${order.statusLabel}
+                                </span>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <a href="/orders/${order.id}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye me-1"></i> Chi tiết
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                    ordersList.appendChild(card);
+                });
+                
             } catch (error) {
-                console.error('Error loading orders:', error);
+                console.error('❌ Error loading orders:', error);
+                document.getElementById('ordersList').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.
+                    </div>
+                `;
             }
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+
+        function formatPrice(price) {
+            if (!price) return '0₫';
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
         }
 
         function logout() {

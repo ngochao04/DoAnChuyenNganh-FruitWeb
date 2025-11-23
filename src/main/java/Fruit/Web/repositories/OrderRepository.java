@@ -32,4 +32,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByCreatedAtBetween(OffsetDateTime start, OffsetDateTime end);
     List<Order> findByCreatedAtBetweenAndStatusNot(OffsetDateTime start, OffsetDateTime end, OrderStatus status);
+    List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

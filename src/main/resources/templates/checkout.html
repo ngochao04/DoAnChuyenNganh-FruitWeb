@@ -930,7 +930,7 @@
                         } else if (paymentMethod === 'MOMO' && result.paymentUrl) {
                             window.location.href = result.paymentUrl;
                         } else {
-                            window.location.href = '/';
+                            window.location.href = `/orders/${result.id}`;
                         }
                     }, 1500);
                 } else {

@@ -19,6 +19,12 @@
             padding: 25px;
             margin-bottom: 20px;
         }
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 
@@ -28,12 +34,22 @@
         <div class="spinner-grow text-primary" role="status"></div>
     </div>
 
-    <!-- Navbar (same structure) -->
+    <!-- Navbar (same as my-orders) -->
     <div class="container-fluid fixed-top">
         <div class="container topbar bg-primary d-none d-lg-block">
             <div class="d-flex justify-content-between">
                 <div class="top-info ps-2">
-                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> 123 Đường ABC, TP.HCM</small>
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> 
+                        <a href="#" class="text-white">123 Đường ABC, TP.HCM</a>
+                    </small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i>
+                        <a href="#" class="text-white">contact@fruitables.vn</a>
+                    </small>
+                </div>
+                <div class="top-link pe-2">
+                    <a href="#" class="text-white"><small class="text-white mx-2">Chính sách bảo mật</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white mx-2">Điều khoản</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white ms-2">Chính sách đổi trả</small></a>
                 </div>
             </div>
         </div>
@@ -43,16 +59,92 @@
                 <a th:href="@{/}" class="navbar-brand">
                     <h1 class="text-primary display-6">Fruitables</h1>
                 </a>
-                <div class="navbar-nav mx-auto">
-                    <a th:href="@{/}" class="nav-item nav-link"><i class="fas fa-home me-1"></i> Trang chủ</a>
-                    <a th:href="@{/shop}" class="nav-item nav-link"><i class="fas fa-store me-1"></i> Cửa hàng</a>
-                </div>
-                <div class="d-flex m-3 me-0">
-                    <a th:href="@{/cart}" class="position-relative me-4 my-auto">
-                        <i class="fa fa-shopping-bag fa-2x"></i>
-                        <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
-                            style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
-                    </a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a th:href="@{/}" class="nav-item nav-link">
+                            <i class="fas fa-home me-1"></i> Trang chủ
+                        </a>
+                        
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown">
+                                <i class="fas fa-store me-1"></i> Cửa hàng
+                            </a>
+                            <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                                <a th:href="@{/shop}" class="dropdown-item">
+                                    <i class="fas fa-th me-2"></i> Tất cả sản phẩm
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <div id="dynamicCategories">
+                                    <a href="#" class="dropdown-item text-muted">
+                                        <small>Đang tải danh mục...</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <a th:href="@{/contact}" class="nav-item nav-link">
+                            <i class="fas fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </div>
+                    
+                    <div class="d-flex m-3 me-0">
+                        <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" 
+                                data-bs-toggle="modal" data-bs-target="#searchModal">
+                            <i class="fas fa-search text-primary"></i>
+                        </button>
+                        
+                        <a th:href="@{/cart}" class="position-relative me-4 my-auto">
+                            <i class="fa fa-shopping-bag fa-2x"></i>
+                            <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
+                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
+                        </a>
+                        
+                        <div class="dropdown my-auto">
+                            <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user fa-2x"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" id="userDropdown">
+                                <li class="guest-menu">
+                                    <a class="dropdown-item" href="/login">
+                                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                    </a>
+                                </li>
+                                <li class="guest-menu">
+                                    <a class="dropdown-item" href="/register">
+                                        <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                    </a>
+                                </li>
+                                
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item disabled" href="#">
+                                        <i class="fas fa-user-circle me-2"></i>
+                                        <span id="userName">Người dùng</span>
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;"><hr class="dropdown-divider"></li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item" href="/profile">
+                                        <i class="fas fa-user-edit me-2"></i>Thông tin cá nhân
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item" href="/orders">
+                                        <i class="fas fa-shopping-cart me-2"></i>Lịch sử mua hàng
+                                    </a>
+                                </li>
+                                <li class="user-menu" style="display: none;"><hr class="dropdown-divider"></li>
+                                <li class="user-menu" style="display: none;">
+                                    <a class="dropdown-item text-danger" href="#" onclick="logout(); return false;">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </nav>
         </div>
@@ -72,11 +164,8 @@
     <div class="container py-5">
         <div class="row">
             <div class="col-12">
-                <div class="info-card">
-                    <h4 class="mb-4">Thông tin đơn hàng</h4>
-                    <div id="orderDetail">
-                        <p class="text-center text-muted">Đang tải thông tin đơn hàng...</p>
-                    </div>
+                <div id="orderDetailContainer">
+                    <p class="text-center text-muted">Đang tải thông tin đơn hàng...</p>
                 </div>
             </div>
         </div>
@@ -111,11 +200,13 @@
             setTimeout(() => document.getElementById('spinner').classList.remove('show'), 300);
         });
 
-        // Get order ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('id');
+        // Get order ID from URL path
+        const pathParts = window.location.pathname.split('/');
+        const orderId = pathParts[pathParts.length - 1];
 
-        if (!orderId) {
+        console.log('📦 Order ID from URL:', orderId);
+
+        if (!orderId || isNaN(orderId)) {
             alert('Không tìm thấy đơn hàng!');
             window.location.href = '/orders';
         }
@@ -123,15 +214,193 @@
         // Load order detail
         async function loadOrderDetail() {
             try {
-                // TODO: Call API to get order detail
-                document.getElementById('orderDetail').innerHTML = `
-                    <p class="text-muted">Đơn hàng #${orderId}</p>
-                    <p>Chức năng đang được phát triển</p>
-                `;
+                console.log('📦 Loading order detail:', orderId);
+                
+                const response = await fetch(`/api/orders/${orderId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load order');
+                }
+                
+                const order = await response.json();
+                console.log('📦 Order detail loaded:', order);
+                
+                displayOrderDetail(order);
+                
             } catch (error) {
-                console.error('Error:', error);
+                console.error('❌ Error:', error);
+                document.getElementById('orderDetailContainer').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Không thể tải thông tin đơn hàng. 
+                        <a href="/orders" class="alert-link">Quay lại danh sách</a>
+                    </div>
+                `;
             }
         }
+
+        function displayOrderDetail(order) {
+            const container = document.getElementById('orderDetailContainer');
+            
+            // Items HTML
+            let itemsHTML = '';
+            if (order.items && order.items.length > 0) {
+                order.items.forEach(item => {
+                    itemsHTML += `
+                        <tr>
+                            <td>${item.titleSnapshot}</td>
+                            <td class="text-center">${item.quantity}</td>
+                            <td class="text-end">${formatPrice(item.unitPrice)}</td>
+                            <td class="text-end">${formatPrice(item.lineTotal)}</td>
+                        </tr>
+                    `;
+                });
+            }
+            
+         container.innerHTML = `
+                <!-- Order Header -->
+                <div class="info-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h4 class="mb-1">Đơn hàng #${order.orderNo}</h4>
+                            <small class="text-muted">Đặt lúc: ${formatDate(order.createdAt)}</small>
+                        </div>
+                        <span class="status-badge bg-${getStatusColor(order.status)} text-white">
+                            ${order.statusLabel}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Thông tin giao hàng -->
+                    <div class="col-lg-6">
+                        <div class="info-card">
+                            <h5 class="mb-3"><i class="fas fa-shipping-fast me-2 text-primary"></i>Thông tin giao hàng</h5>
+                            <p class="mb-2"><strong>Người nhận:</strong> ${order.recipientName}</p>
+                            <p class="mb-2"><strong>Số điện thoại:</strong> ${order.phone}</p>
+                            <p class="mb-2"><strong>Địa chỉ:</strong> ${order.addressLine1}</p>
+                            <p class="mb-2"><strong>Phường/Xã:</strong> ${order.ward || '-'}</p>
+                            <p class="mb-2"><strong>Quận/Huyện:</strong> ${order.district || '-'}</p>
+                            <p class="mb-2"><strong>Tỉnh/TP:</strong> ${order.province || '-'}</p>
+                            ${order.note ? `<p class="mb-0"><strong>Ghi chú:</strong> ${order.note}</p>` : ''}
+                        </div>
+                    </div>
+
+                    <!-- Thông tin thanh toán -->
+                    <div class="col-lg-6">
+                        <div class="info-card">
+                            <h5 class="mb-3"><i class="fas fa-credit-card me-2 text-primary"></i>Thông tin thanh toán</h5>
+                            <p class="mb-2"><strong>Phương thức:</strong> ${order.paymentMethodLabel}</p>
+                            <p class="mb-2">
+                                <strong>Trạng thái:</strong> 
+                                <span class="badge bg-${order.paymentStatus === 'PAID' ? 'success' : 'warning'}">
+                                    ${order.paymentStatusLabel}
+                                </span>
+                            </p>
+                            <hr>
+                            <p class="mb-2 d-flex justify-content-between">
+                                <span>Tạm tính:</span>
+                                <strong>${formatPrice(order.itemsTotal)}</strong>
+                            </p>
+                            <p class="mb-2 d-flex justify-content-between">
+                                <span>Phí vận chuyển:</span>
+                                <strong>${formatPrice(order.shippingFee)}</strong>
+                            </p>
+                            ${order.discountTotal && order.discountTotal > 0 ? `
+                                <p class="mb-2 d-flex justify-content-between text-success">
+                                    <span>Giảm giá:</span>
+                                    <strong>-${formatPrice(order.discountTotal)}</strong>
+                                </p>
+                            ` : ''}
+                            <hr>
+                            <p class="mb-0 d-flex justify-content-between">
+                                <strong class="fs-5">Tổng cộng:</strong>
+                                <strong class="fs-5 text-primary">${formatPrice(order.grandTotal)}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách sản phẩm -->
+                <div class="info-card">
+                    <h5 class="mb-3"><i class="fas fa-shopping-basket me-2 text-primary"></i>Sản phẩm đã đặt</h5>
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-end">Đơn giá</th>
+                                    <th class="text-end">Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${itemsHTML}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="text-center mt-4">
+                    <a href="/orders" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+                    </a>
+                    ${order.status === 'PENDING' ? `
+                        <button class="btn btn-danger" onclick="cancelOrder(${order.id})">
+                            <i class="fas fa-times me-2"></i>Hủy đơn hàng
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function getStatusColor(status) {
+            const colors = {
+                'PENDING': 'warning',
+                'CONFIRMED': 'info',
+                'SHIPPED': 'primary',
+                'COMPLETED': 'success',
+                'CANCELLED': 'danger'
+            };
+            return colors[status] || 'secondary';
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            const date = new Date(dateString);
+            return date.toLocaleString('vi-VN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function formatPrice(price) {
+            if (!price) return '0₫';
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+
+        async function cancelOrder(orderId) {
+            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) return;
+            
+            try {
+                // TODO: Implement cancel order API
+                alert('Chức năng hủy đơn hàng đang được phát triển');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Không thể hủy đơn hàng');
+            }
+        }
+
+        // Update cart count
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
 
         loadOrderDetail();
     </script>
