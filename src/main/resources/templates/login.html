@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Đăng nhập - Fruitables</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/fe/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/fe/css/style.css}" rel="stylesheet">
+    
+    <style>
+        .auth-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .auth-header {
+            background: linear-gradient(135deg, #81c408 0%, #5a8c06 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .auth-body {
+            padding: 40px 30px;
+        }
+        .form-control:focus {
+            border-color: #81c408;
+            box-shadow: 0 0 0 0.2rem rgba(129, 196, 8, 0.25);
+        }
+        .btn-auth {
+            background: linear-gradient(135deg, #81c408 0%, #5a8c06 100%);
+            border: none;
+            color: white;
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(129, 196, 8, 0.3);
+            color: white;
+        }
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .custom-toast {
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+        .custom-toast.success { border-left: 4px solid #28a745; }
+        .custom-toast.error { border-left: 4px solid #dc3545; }
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Spinner -->
+    <div id="spinner" class="show w-100 vh-100 bg-white position-fixed translate-middle top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" role="status"></div>
+    </div>
+
+    <!-- Navbar start -->
+    <div class="container-fluid fixed-top">
+        <div class="container topbar bg-primary d-none d-lg-block">
+            <div class="d-flex justify-content-between">
+                <div class="top-info ps-2">
+                    <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> 
+                        <a href="#" class="text-white">123 Đường ABC, TP.HCM</a>
+                    </small>
+                    <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i>
+                        <a href="#" class="text-white">contact@fruitables.vn</a>
+                    </small>
+                </div>
+                <div class="top-link pe-2">
+                    <a href="#" class="text-white"><small class="text-white mx-2">Chính sách bảo mật</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white mx-2">Điều khoản</small>/</a>
+                    <a href="#" class="text-white"><small class="text-white ms-2">Chính sách đổi trả</small></a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="container px-0">
+            <nav class="navbar navbar-light bg-white navbar-expand-xl">
+                <a th:href="@{/}" class="navbar-brand">
+                    <h1 class="text-primary display-6">Fruitables</h1>
+                </a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                    <div class="navbar-nav mx-auto">
+                        <a th:href="@{/}" class="nav-item nav-link">
+                            <i class="fas fa-home me-1"></i> Trang chủ
+                        </a>
+                        <a th:href="@{/shop}" class="nav-item nav-link">
+                            <i class="fas fa-store me-1"></i> Cửa hàng
+                        </a>
+                        <a th:href="@{/contact}" class="nav-item nav-link">
+                            <i class="fas fa-envelope me-1"></i> Liên hệ
+                        </a>
+                    </div>
+                    
+                    <div class="d-flex m-3 me-0">
+                        <a th:href="@{/cart}" class="position-relative me-4 my-auto">
+                            <i class="fa fa-shopping-bag fa-2x"></i>
+                            <span id="cartCount" class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" 
+                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;">0</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+    <!-- Navbar End -->
+
+    <!-- Page Header -->
+    <div class="container-fluid page-header py-5" style="margin-top: 90px;">
+        <h1 class="text-center text-white display-6">Đăng nhập</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+            <li class="breadcrumb-item active text-white">Đăng nhập</li>
+        </ol>
+    </div>
+
+    <!-- Auth Container -->
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="auth-card">
+            <div class="auth-header">
+                <h2 class="mb-0">
+                    <i class="fas fa-user-circle fa-3x mb-3"></i>
+                    <br>Đăng nhập
+                </h2>
+                <p class="mb-0">Chào mừng bạn trở lại!</p>
+            </div>
+            
+            <div class="auth-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-envelope me-2"></i>Email
+                        </label>
+                        <input type="email" id="email" class="form-control form-control-lg" 
+                               placeholder="your@email.com" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">
+                            <i class="fas fa-lock me-2"></i>Mật khẩu
+                        </label>
+                        <input type="password" id="password" class="form-control form-control-lg" 
+                               placeholder="••••••••" required>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember">
+                        <label class="form-check-label" for="remember">
+                            Ghi nhớ đăng nhập
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-auth w-100 btn-lg mb-3">
+                        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-muted mb-2">Chưa có tài khoản?</p>
+                        <a href="/register" class="text-primary fw-bold">
+                            <i class="fas fa-user-plus me-1"></i>Đăng ký ngay
+                        </a>
+                    </div>
+                    
+                    <hr class="my-4">
+                    
+                    <div class="text-center">
+                        <a href="/" class="text-muted">
+                            <i class="fas fa-home me-1"></i>Về trang chủ
+                        </a>
+                    </div>
+                </form>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5">
+        <div class="container py-5">
+            <div class="pb-4 mb-4" style="border-bottom: 1px solid rgba(226, 175, 24, 0.5);">
+                <div class="row g-4">
+                    <div class="col-lg-3">
+                        <a href="/"><h1 class="text-primary mb-0">Fruitables</h1></a>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <div class="footer-item">
+                        <h4 class="text-light mb-3">Liên hệ</h4>
+                        <p><i class="fas fa-map-marker-alt me-2"></i>123 Đường ABC, TP.HCM</p>
+                        <p><i class="fas fa-envelope me-2"></i>contact@fruitables.vn</p>
+                        <p><i class="fas fa-phone me-2"></i>+84 123 456 789</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="container-fluid copyright bg-dark py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                    <span class="text-light">© Fruitables 2025</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_BASE = '/api';
+
+        // Hide spinner
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('spinner').classList.remove('show');
+            }, 300);
+        });
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                window.location.href = '/';
+            }
+        });
+
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            
+            if (!email || !password) {
+                showToast('Vui lòng điền đầy đủ thông tin', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Save to localStorage
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    showToast('Đăng nhập thành công!', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 1000);
+                } else {
+                    showToast(data.message || 'Đăng nhập thất bại', 'error');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showToast('Có lỗi xảy ra. Vui lòng thử lại sau', 'error');
+            }
+        });
+
+        // Toast function
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const icon = type === 'success' ? '✓' : '✕';
+            const title = type === 'success' ? 'Thành công!' : 'Lỗi!';
+            
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            toast.innerHTML = `
+                <div style="font-size: 24px; margin-right: 12px; color: ${type === 'success' ? '#28a745' : '#dc3545'};">
+                    ${icon}
+                </div>
+                <div class="flex-grow-1">
+                    <strong>${title}</strong>
+                    <p class="mb-0 small">${message}</p>
+                </div>
+                <button onclick="this.parentElement.remove()" 
+                        style="border:none;background:none;font-size:20px;cursor:pointer;color:#999;">×</button>
+            `;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+    </script>
+</body>
+</html>
