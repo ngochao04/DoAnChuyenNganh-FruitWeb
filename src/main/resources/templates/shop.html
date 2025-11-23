@@ -22,6 +22,136 @@
     <link th:href="@{/fe/css/style.css}" rel="stylesheet">
     
     <style>
+        /* Custom Toast Styles */
+        .custom-toast {
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+            border-left: 4px solid;
+        }
+
+        .custom-toast.success {
+            border-left-color: #28a745;
+        }
+
+        .custom-toast.error {
+            border-left-color: #dc3545;
+        }
+
+        .custom-toast.info {
+            border-left-color: #17a2b8;
+        }
+
+        .toast-icon {
+            font-size: 24px;
+            font-weight: bold;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .custom-toast.success .toast-icon {
+            background: #d4edda;
+            color: #28a745;
+        }
+
+        .custom-toast.error .toast-icon {
+            background: #f8d7da;
+            color: #dc3545;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toast-close {
+            border: none;
+            background: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+        }
+
+        .toast-close:hover {
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Product Card Improvements */
+        .fruite-item {
+            transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
+        }
+
+        .fruite-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .fruite-img {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fruite-img img {
+            transition: transform 0.3s;
+        }
+
+        .fruite-img:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Highlight active category */
+        .fruite-categorie a.active {
+            color: #81c408 !important;
+            font-weight: 600;
+        }
+
         /* Style cho dropdown user */
         #userDropdown {
             min-width: 200px;
@@ -59,12 +189,6 @@
 
         .dropdown-toggle::after {
             display: none;
-        }
-        
-        /* Highlight active category */
-        .fruite-categorie a.active {
-            color: #81c408 !important;
-            font-weight: 600;
         }
     </style>
 </head>
@@ -308,60 +432,6 @@
                             <p class="text-secondary mb-0">Trái cây tươi ngon</p>
                         </a>
                     </div>
-                    <div class="col-lg-6">
-                        <div class="position-relative mx-auto">
-                            <input class="form-control border-0 w-100 py-3 px-4 rounded-pill" type="email" placeholder="Email của bạn">
-                            <button type="submit" class="btn btn-primary border-0 border-secondary py-3 px-4 position-absolute rounded-pill text-white" 
-                                    style="top: 0; right: 0;">Đăng ký nhận tin</button>
-                        </div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="d-flex justify-content-end pt-3">
-                            <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-secondary me-2 btn-md-square rounded-circle" href="#"><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-outline-secondary btn-md-square rounded-circle" href="#"><i class="fab fa-linkedin-in"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row g-5">
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-item">
-                        <h4 class="text-light mb-3">Tại sao chọn chúng tôi?</h4>
-                        <p class="mb-4">Sản phẩm tươi ngon, chất lượng cao, giao hàng nhanh chóng, giá cả hợp lý.</p>
-                        <a href="/about" class="btn border-secondary py-2 px-4 rounded-pill text-primary">Về chúng tôi</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="d-flex flex-column text-start footer-item">
-                        <h4 class="text-light mb-3">Thông tin</h4>
-                        <a class="btn-link" href="/about">Giới thiệu</a>
-                        <a class="btn-link" href="/contact">Liên hệ</a>
-                        <a class="btn-link" href="#">Chính sách bảo mật</a>
-                        <a class="btn-link" href="#">Điều khoản sử dụng</a>
-                        <a class="btn-link" href="#">Chính sách đổi trả</a>
-                        <a class="btn-link" href="#">Câu hỏi thường gặp</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="d-flex flex-column text-start footer-item">
-                        <h4 class="text-light mb-3">Tài khoản</h4>
-                        <a class="btn-link" href="#">Tài khoản của tôi</a>
-                        <a class="btn-link" href="/shop">Cửa hàng</a>
-                        <a class="btn-link" href="/cart">Giỏ hàng</a>
-                        <a class="btn-link" href="#">Lịch sử đơn hàng</a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="footer-item">
-                        <h4 class="text-light mb-3">Liên hệ</h4>
-                        <p><i class="fas fa-map-marker-alt me-2"></i>123 Đường ABC, Quận 1, TP.HCM</p>
-                        <p><i class="fas fa-envelope me-2"></i>contact@fruitables.vn</p>
-                        <p><i class="fas fa-phone me-2"></i>+84 123 456 789</p>
-                        <p class="mb-2">Phương thức thanh toán:</p>
-                        <img th:src="@{/fe/img/payment.png}" class="img-fluid" alt="">
-                    </div>
                 </div>
             </div>
         </div>
@@ -376,9 +446,6 @@
                         <i class="fas fa-copyright text-light me-2"></i>
                         <a href="/" class="text-light">Fruitables 2025</a>, Bản quyền thuộc về chúng tôi.
                     </span>
-                </div>
-                <div class="col-md-6 my-auto text-center text-md-end text-white">
-                    Thiết kế bởi <a class="border-bottom text-primary" href="#">Đồ án chuyên ngành</a>
                 </div>
             </div>
         </div>
@@ -399,7 +466,7 @@
 
     <script>
         const API_BASE = '/api/admin';
-    
+        let allCategories = {}; // Store categories globally
         let currentPage = 0;
         let currentQuery = '';
         let currentCategory = '';
@@ -436,6 +503,11 @@
             try {
                 const response = await fetch(`${API_BASE}/categories/all-min?onlyActive=true`);
                 const categories = await response.json();
+                
+                // Store categories globally
+                categories.forEach(cat => {
+                    allCategories[cat.id] = cat.name;
+                });
                 
                 const container = document.getElementById('categoryList');
                 container.innerHTML = `
@@ -511,7 +583,7 @@
             }
         }
         
-        // Display Products
+        // Display Products - IMPROVED VERSION
         function displayProducts(products) {
             const container = document.getElementById('productsContainer');
             container.innerHTML = '';
@@ -522,26 +594,47 @@
                 const price = getPriceDisplay(product);
                 const imageUrl = product.mainImageUrl || '/fe/img/fruite-item-5.jpg';
                 
-                // Lấy tên danh mục đầu tiên hoặc mặc định
-                const categoryName = product.categories && product.categories.length > 0 
-                    ? product.categories[0].name 
-                    : 'Sản phẩm';
+                // Get category name from stored categories
+                let categoryName = 'Sản phẩm';
+                if (product.categoryIds && product.categoryIds.length > 0) {
+                    const catId = product.categoryIds[0];
+                    categoryName = allCategories[catId] || 'Sản phẩm';
+                }
+                
+                // Get price value for quick add
+                let priceValue = product.basePrice || product.priceMin || 0;
                 
                 container.innerHTML += `
-                    <div class="col-md-6 col-lg-6 col-xl-4">
-                        <div class="rounded position-relative fruite-item">
-                            <div class="fruite-img">
-                                <img src="${imageUrl}" class="img-fluid w-100 rounded-top" alt="${product.name}">
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="rounded position-relative fruite-item h-100 d-flex flex-column">
+                            <div class="fruite-img" style="cursor: pointer;" onclick="window.location.href='/shop-detail?id=${product.id}'">
+                                <img src="${imageUrl}" class="img-fluid w-100 rounded-top" alt="${product.name}" 
+                                     style="height: 250px; object-fit: cover;">
                             </div>
-                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" style="top: 10px; left: 10px;">${categoryName}</div>
-                            <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                                <h4>${product.name}</h4>
-                                <p class="text-truncate">${product.shortDesc || 'Sản phẩm tươi ngon chất lượng cao'}</p>
-                                <div class="d-flex justify-content-between flex-lg-wrap">
-                                    ${price}
-                                    <a href="/shop-detail?id=${product.id}" class="btn border border-secondary rounded-pill px-3 text-primary">
-                                        <i class="fa fa-shopping-bag me-2 text-primary"></i>Xem chi tiết
-                                    </a>
+                            <div class="text-white bg-secondary px-3 py-1 rounded position-absolute" 
+                                 style="top: 10px; left: 10px; font-size: 0.85rem;">${categoryName}</div>
+                            
+                            <div class="p-3 border border-secondary border-top-0 rounded-bottom flex-grow-1 d-flex flex-column">
+                                <h5 class="mb-2" style="height: 48px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                    ${product.name}
+                                </h5>
+                                <p class="text-muted small mb-2" style="height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                    ${product.shortDesc || 'Sản phẩm tươi ngon chất lượng cao'}
+                                </p>
+                                <div class="mt-auto">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        ${price}
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-sm border-secondary rounded-pill text-primary" 
+                                                onclick="quickAddToCart(${product.id}, '${escapeHtml(product.name)}', ${priceValue}, '${imageUrl}')">
+                                            <i class="fa fa-shopping-bag me-1"></i>Thêm vào giỏ
+                                        </button>
+                                        <a href="/shop-detail?id=${product.id}" 
+                                           class="btn btn-sm btn-outline-primary rounded-pill">
+                                            <i class="fa fa-eye me-1"></i>Xem chi tiết
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -585,6 +678,38 @@
             container.innerHTML = html;
         }
         
+        // Quick Add to Cart Function
+        function quickAddToCart(productId, productName, price, imageUrl) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            
+            const cartItem = {
+                productId: productId,
+                productName: productName,
+                variantId: null,
+                variantName: null,
+                quantity: 1,
+                price: price,
+                image: imageUrl,
+                addedAt: new Date().toISOString()
+            };
+            
+            const existingIndex = cart.findIndex(item => 
+                item.productId === cartItem.productId && !item.variantId
+            );
+            
+            if (existingIndex >= 0) {
+                cart[existingIndex].quantity += 1;
+            } else {
+                cart.push(cartItem);
+            }
+            
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Custom Toast Notification
+            showCustomToast('✓ Đã thêm vào giỏ hàng!', 'success');
+            updateCartCount();
+        }
+        
         // Event Handlers
         function handleSearch(e) {
             currentQuery = e.target.value.trim();
@@ -620,6 +745,7 @@
                 document.getElementById('searchInput').value = currentQuery;
             }
         }
+        
         // Utilities
         function showLoading(show) {
             document.getElementById('loading').style.display = show ? 'block' : 'none';
@@ -639,6 +765,17 @@
                 clearTimeout(timeout);
                 timeout = setTimeout(() => func.apply(this, args), wait);
             };
+        }
+        
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
         }
         
         function updateCartCount() {
@@ -675,8 +812,47 @@
         function logout() {
             if (confirm('Bạn có chắc muốn đăng xuất?')) {
                 localStorage.removeItem('user');
+                localStorage.removeItem('token');
                 window.location.href = '/';
             }
+        }
+        
+        // Custom Toast Function
+        function showCustomToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toastContainer') || createToastContainer();
+            
+            const toast = document.createElement('div');
+            toast.className = `custom-toast ${type}`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    ${type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ'}
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${type === 'success' ? 'Thành công!' : type === 'error' ? 'Lỗi!' : 'Thông báo'}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                z-index: 9999;
+            `;
+            document.body.appendChild(container);
+            return container;
         }
     </script>
 </body>
