@@ -712,47 +712,107 @@
             form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        function applyCouponCode() {
-            const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
-            const messageEl = document.getElementById('couponMessage');
+        async function applyCouponCode() {
+    const couponCode = document.getElementById('couponCode').value.trim().toUpperCase();
+    const messageEl = document.getElementById('couponMessage');
+    const applyBtn = document.getElementById('applyCouponBtn');
+    
+    if (!couponCode) {
+        messageEl.className = 'mt-2 text-danger';
+        messageEl.textContent = 'Vui lòng nhập mã giảm giá';
+        messageEl.style.display = 'block';
+        return;
+    }
+    
+    // Show loading
+    applyBtn.disabled = true;
+    applyBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+    
+    try {
+        // ✅ GỌI API ĐỂ VALIDATE COUPON
+        const response = await fetch(`${API_BASE}/coupons?q=${couponCode}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
             
-            if (!couponCode) {
-                messageEl.className = 'mt-2 text-danger';
-                messageEl.textContent = 'Vui lòng nhập mã giảm giá';
-                messageEl.style.display = 'block';
-                return;
+            // Tìm coupon với code khớp
+            const coupon = data.content.find(c => 
+                c.code.toUpperCase() === couponCode && c.isActive
+            );
+            
+            if (!coupon) {
+                throw new Error('Mã giảm giá không tồn tại hoặc đã hết hạn');
             }
             
-            // Giả lập validate coupon - Thay bằng API call thật
-            const validCoupons = {
-                'GIAM10K': { discount: 10000, type: 'fixed' },
-                'GIAM10': { discount: 10, type: 'percent' },
-                'FREESHIP': { discount: 30000, type: 'shipping' }
+            // ✅ VALIDATE THỜI HẠN
+            const now = new Date();
+            const startDate = new Date(coupon.startsAt);
+            const endDate = new Date(coupon.endsAt);
+            
+            if (now < startDate) {
+                throw new Error('Mã giảm giá chưa đến thời gian sử dụng');
+            }
+            
+            if (now > endDate) {
+                throw new Error('Mã giảm giá đã hết hạn');
+            }
+            
+            // ✅ VALIDATE SỐ LƯỢNG SỬ DỤNG
+            if (coupon.maxRedemptions && coupon.redemptions >= coupon.maxRedemptions) {
+                throw new Error('Mã giảm giá đã hết lượt sử dụng');
+            }
+            
+            // ✅ VALIDATE ĐƠN HÀNG TỐI THIỂU
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (coupon.minOrderAmount && subtotal < coupon.minOrderAmount) {
+                throw new Error(`Đơn hàng tối thiểu ${formatPrice(coupon.minOrderAmount)} để áp dụng mã này`);
+            }
+            
+            // ✅ ÁP DỤNG COUPON
+            appliedCoupon = {
+                id: coupon.id,
+                code: coupon.code,
+                description: coupon.description,
+                amountOff: coupon.amountOff || 0,
+                percentOff: coupon.percentOff || 0,
+                minOrderAmount: coupon.minOrderAmount
             };
             
-            if (validCoupons[couponCode]) {
-                appliedCoupon = {
-                    code: couponCode,
-                    ...validCoupons[couponCode]
-                };
-                
-                messageEl.className = 'mt-2 text-success';
-                messageEl.innerHTML = `
-                    <i class="fas fa-check-circle me-1"></i>
-                    Áp dụng mã thành công! 
-                    <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="removeCoupon()">Xóa</button>
-                `;
-                messageEl.style.display = 'block';
-                
-                showCustomToast('Áp dụng mã giảm giá thành công!', 'success');
-                updateSummary();
-            } else {
-                messageEl.className = 'mt-2 text-danger';
-                messageEl.textContent = 'Mã giảm giá không hợp lệ hoặc đã hết hạn';
-                messageEl.style.display = 'block';
-                showCustomToast('Mã giảm giá không hợp lệ', 'error');
-            }
+            messageEl.className = 'mt-2 text-success';
+            messageEl.innerHTML = `
+                <i class="fas fa-check-circle me-1"></i>
+                ${coupon.description || 'Áp dụng mã thành công!'}
+                <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-2" onclick="removeCoupon()">
+                    <i class="fas fa-times"></i> Xóa
+                </button>
+            `;
+            messageEl.style.display = 'block';
+            
+            showCustomToast('✅ Áp dụng mã giảm giá thành công!', 'success');
+            updateSummary();
+            
+        } else {
+            throw new Error('Mã giảm giá không hợp lệ');
         }
+        
+    } catch (error) {
+        console.error('Error applying coupon:', error);
+        messageEl.className = 'mt-2 text-danger';
+        messageEl.innerHTML = `<i class="fas fa-exclamation-circle me-1"></i>${error.message}`;
+        messageEl.style.display = 'block';
+        showCustomToast('❌ ' + error.message, 'error');
+        
+    } finally {
+        // Reset button
+        applyBtn.disabled = false;
+        applyBtn.innerHTML = 'Áp dụng';
+    }
+}
 
         function removeCoupon() {
             appliedCoupon = null;
@@ -784,167 +844,155 @@
         }
 
         function updateSummary() {
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            let discount = 0;
-            let shippingFee = SHIPPING_FEE;
-            
-            if (appliedCoupon) {
-                if (appliedCoupon.type === 'fixed') {
-                    discount = appliedCoupon.discount;
-                } else if (appliedCoupon.type === 'percent') {
-                    discount = subtotal * (appliedCoupon.discount / 100);
-                } else if (appliedCoupon.type === 'shipping') {
-                    shippingFee = Math.max(0, shippingFee - appliedCoupon.discount);
-                    discount = SHIPPING_FEE - shippingFee;
-                }
-            }
-            
-            const grandTotal = subtotal + shippingFee - (appliedCoupon && appliedCoupon.type !== 'shipping' ? discount : 0);
-            
-            document.getElementById('subtotal').textContent = formatPrice(subtotal);
-            document.getElementById('shippingFee').textContent = formatPrice(shippingFee);
-            document.getElementById('grandTotal').textContent = formatPrice(grandTotal);
-            
-            // Show discount row
-            const existingDiscountRow = document.getElementById('discountRow');
-            if (appliedCoupon && discount > 0) {
-                if (!existingDiscountRow) {
-                    const row = document.createElement('div');
-                    row.id = 'discountRow';
-                    row.className = 'py-3 border-bottom d-flex justify-content-between';
-                    row.innerHTML = `
-                        <h5 class="mb-0 text-success">Giảm giá</h5>
-                        <p class="mb-0 text-success">-${formatPrice(discount)}</p>
-                    `;
-                    document.getElementById('shippingRow').after(row);
-                } else {
-                    existingDiscountRow.innerHTML = `
-                        <h5 class="mb-0 text-success">Giảm giá</h5>
-                        <p class="mb-0 text-success">-${formatPrice(discount)}</p>
-                    `;
-                }
-            } else if (existingDiscountRow) {
-                existingDiscountRow.remove();
-            }
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let discount = 0;
+    let shippingFee = SHIPPING_FEE;
+    
+    if (appliedCoupon) {
+        // ✅ TÍNH DISCOUNT THEO LOẠI
+        if (appliedCoupon.amountOff) {
+            // Giảm giá cố định
+            discount = appliedCoupon.amountOff;
+        } else if (appliedCoupon.percentOff) {
+            // Giảm % trên tổng đơn
+            discount = Math.round(subtotal * (appliedCoupon.percentOff / 100));
         }
+    }
+    
+    const grandTotal = subtotal + shippingFee - discount;
+    
+    document.getElementById('subtotal').textContent = formatPrice(subtotal);
+    document.getElementById('shippingFee').textContent = formatPrice(shippingFee);
+    document.getElementById('grandTotal').textContent = formatPrice(grandTotal);
+    
+    // Show/hide discount row
+    const existingDiscountRow = document.getElementById('discountRow');
+    if (discount > 0) {
+        if (!existingDiscountRow) {
+            const row = document.createElement('div');
+            row.id = 'discountRow';
+            row.className = 'py-4 mb-4 border-bottom d-flex justify-content-between';
+            row.innerHTML = `
+                <h5 class="mb-0">
+                    <i class="fas fa-tag text-success me-2"></i>Giảm giá
+                </h5>
+                <p class="mb-0 text-success fw-bold">-${formatPrice(discount)}</p>
+            `;
+            document.getElementById('shippingRow').after(row);
+        } else {
+            existingDiscountRow.querySelector('p').textContent = '-' + formatPrice(discount);
+        }
+    } else if (existingDiscountRow) {
+        existingDiscountRow.remove();
+    }
+}
 
         async function handleCheckout(e) {
-            e.preventDefault();
-            
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
-            
-            let recipientName, phone, addressLine1, ward, district, province, note;
-            
-            // ✅ Get data from selected address or manual form
-            if (selectedAddress) {
-                recipientName = selectedAddress.recipientName;
-                phone = selectedAddress.phone;
-                addressLine1 = selectedAddress.line1;
-                ward = selectedAddress.ward;
-                district = selectedAddress.district;
-                province = selectedAddress.province;
-                note = selectedAddress.note || '';
-                
-                console.log('✅ Using selected address:', selectedAddress);
-            } else {
-                // ✅ Validate manual form
-                recipientName = document.getElementById('recipientName').value.trim();
-                phone = document.getElementById('phone').value.trim();
-                addressLine1 = document.getElementById('addressLine1').value.trim();
-                ward = document.getElementById('ward').value.trim();
-                district = document.getElementById('district').value.trim();
-                province = document.getElementById('province').value.trim();
-                note = document.getElementById('note').value.trim();
-                
-                console.log('📝 Using manual form data');
-                
-                // ✅ VALIDATE - Phải điền đầy đủ thông tin
-                if (!recipientName || !phone || !addressLine1 || !ward || !district || !province) {
-                    showCustomToast('❌ Vui lòng chọn địa chỉ có sẵn hoặc điền đầy đủ thông tin giao hàng!', 'error');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Đặt hàng';
-                    return;
-                }
-            }
-            
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-            
-            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            let discount = 0;
-            
-            if (appliedCoupon) {
-                if (appliedCoupon.type === 'fixed') {
-                    discount = appliedCoupon.discount;
-                } else if (appliedCoupon.type === 'percent') {
-                    discount = subtotal * (appliedCoupon.discount / 100);
-                } else if (appliedCoupon.type === 'shipping') {
-                    discount = appliedCoupon.discount;
-                }
-            }
-            
-            const orderData = {
-                userId: user.id,
-                recipientName: recipientName,
-                phone: phone,
-                addressLine1: addressLine1,
-                ward: ward,
-                district: district,
-                province: province,
-                note: note,
-                paymentMethod: paymentMethod,
-                shippingFee: SHIPPING_FEE,
-                discountTotal: discount,
-                items: cart.map(item => ({
-                    productId: item.productId,
-                    variantId: item.variantId || null,
-                    quantity: item.quantity
-                }))
-            };
-            
-            console.log('📦 Order data:', orderData);
-            
-            try {
-                const response = await fetch(`${API_BASE}/orders`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orderData)
-                });
-                
-                console.log('📡 Response status:', response.status);
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    
-                    localStorage.removeItem('cart');
-                    
-                    showCustomToast(`🎉 Đặt hàng thành công! Mã đơn: ${result.orderNo}`, 'success');
-                    
-                    setTimeout(() => {
-                        if (paymentMethod === 'VNPAY' && result.paymentUrl) {
-                            window.location.href = result.paymentUrl;
-                        } else if (paymentMethod === 'MOMO' && result.paymentUrl) {
-                            window.location.href = result.paymentUrl;
-                        } else {
-                            window.location.href = `/orders/${result.id}`;
-                        }
-                    }, 1500);
-                } else {
-                    const errorData = await response.json();
-                    console.error('❌ Error response:', errorData);
-                    throw new Error(errorData.message || 'Không thể đặt hàng');
-                }
-            } catch (error) {
-                console.error('❌ Error:', error);
-                showCustomToast('Có lỗi xảy ra khi đặt hàng: ' + error.message, 'error');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Đặt hàng';
-            }
+    e.preventDefault();
+    
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+    
+    let recipientName, phone, addressLine1, ward, district, province, note;
+    
+    if (selectedAddress) {
+        recipientName = selectedAddress.recipientName;
+        phone = selectedAddress.phone;
+        addressLine1 = selectedAddress.line1;
+        ward = selectedAddress.ward;
+        district = selectedAddress.district;
+        province = selectedAddress.province;
+        note = selectedAddress.note || '';
+    } else {
+        recipientName = document.getElementById('recipientName').value.trim();
+        phone = document.getElementById('phone').value.trim();
+        addressLine1 = document.getElementById('addressLine1').value.trim();
+        ward = document.getElementById('ward').value.trim();
+        district = document.getElementById('district').value.trim();
+        province = document.getElementById('province').value.trim();
+        note = document.getElementById('note').value.trim();
+        
+        if (!recipientName || !phone || !addressLine1 || !ward || !district || !province) {
+            showCustomToast('❌ Vui lòng chọn địa chỉ hoặc điền đầy đủ thông tin giao hàng!', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Đặt hàng';
+            return;
         }
+    }
+    
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    let discount = 0;
+    
+    // ✅ TÍNH DISCOUNT
+    if (appliedCoupon) {
+        if (appliedCoupon.amountOff) {
+            discount = appliedCoupon.amountOff;
+        } else if (appliedCoupon.percentOff) {
+            discount = Math.round(subtotal * (appliedCoupon.percentOff / 100));
+        }
+    }
+    
+    const orderData = {
+        userId: user.id,
+        recipientName: recipientName,
+        phone: phone,
+        addressLine1: addressLine1,
+        ward: ward,
+        district: district,
+        province: province,
+        note: note,
+        paymentMethod: paymentMethod,
+        shippingFee: SHIPPING_FEE,
+        discountTotal: discount,
+        couponCode: appliedCoupon ? appliedCoupon.code : null, // ✅ THÊM COUPON CODE
+        items: cart.map(item => ({
+            productId: item.productId,
+            variantId: item.variantId || null,
+            quantity: item.quantity
+        }))
+    };
+    
+    console.log('📦 Order data:', orderData);
+    
+    try {
+        const response = await fetch(`${API_BASE}/orders`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            
+            localStorage.removeItem('cart');
+            
+            showCustomToast(`🎉 Đặt hàng thành công! Mã đơn: ${result.orderNo}`, 'success');
+            
+            setTimeout(() => {
+                if (paymentMethod === 'VNPAY' && result.paymentUrl) {
+                    window.location.href = result.paymentUrl;
+                } else if (paymentMethod === 'MOMO' && result.paymentUrl) {
+                    window.location.href = result.paymentUrl;
+                } else {
+                    window.location.href = `/orders/${result.id}`;
+                }
+            }, 1500);
+        } else {
+            const errorData = await response.json();
+            console.error('❌ Error response:', errorData);
+            throw new Error(errorData.message || 'Không thể đặt hàng');
+        }
+    } catch (error) {
+        console.error('❌ Error:', error);
+        showCustomToast('❌ Có lỗi xảy ra: ' + error.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Đặt hàng';
+    }
+}
 
         // Custom Toast
         function showCustomToast(message, type = 'success') {
