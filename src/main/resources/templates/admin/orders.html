@@ -419,6 +419,62 @@
       </div>`;
   }
 
+  // ✅ THÊM FUNCTION NÀY - Hiển thị các nút hành động theo trạng thái
+  function getStatusButtons(o) {
+    const status = o.status;
+    let buttons = '';
+    
+    // Nút Xác nhận - chỉ hiện khi đơn ở trạng thái PENDING
+    if (status === 'PENDING') {
+      buttons += `
+        <button type="button"
+                class="btn btn-sm btn-success btn-update-status"
+                data-id="${o.id}"
+                data-status="CONFIRMED"
+                title="Xác nhận đơn hàng">
+          <i class="bx bx-check"></i>
+        </button>`;
+    }
+    
+    // Nút Gửi hàng - chỉ hiện khi đã xác nhận
+    if (status === 'CONFIRMED') {
+      buttons += `
+        <button type="button"
+                class="btn btn-sm btn-primary btn-update-status"
+                data-id="${o.id}"
+                data-status="SHIPPED"
+                title="Đánh dấu đã gửi hàng">
+          <i class="bx bx-package"></i>
+        </button>`;
+    }
+    
+    // Nút Hoàn thành - chỉ hiện khi đã gửi hàng
+    if (status === 'SHIPPED') {
+      buttons += `
+        <button type="button"
+                class="btn btn-sm btn-success btn-update-status"
+                data-id="${o.id}"
+                data-status="COMPLETED"
+                title="Hoàn thành đơn hàng">
+          <i class="bx bx-check-double"></i>
+        </button>`;
+    }
+    
+    // Nút Hủy - hiện cho tất cả trạng thái trừ COMPLETED và CANCELLED
+    if (status !== 'COMPLETED' && status !== 'CANCELLED') {
+      buttons += `
+        <button type="button"
+                class="btn btn-sm btn-danger btn-update-status"
+                data-id="${o.id}"
+                data-status="CANCELLED"
+                title="Hủy đơn hàng">
+          <i class="bx bx-x"></i>
+        </button>`;
+    }
+    
+    return buttons;
+  }
+
   async function load(){
     const url = `${API}?page=${state.page}&size=${state.size}`
       + (state.q ? `&q=${encodeURIComponent(state.q)}` : '');
@@ -432,7 +488,7 @@
       return;
     }
 
-    const pg = await res.json();   // <-- KHÔNG JSON.parse thủ công
+    const pg = await res.json();
 
     body.innerHTML = '';
 
@@ -454,11 +510,14 @@
             <td>${badgePayment(o)}</td>
             <td>${whenUpdated(o)}</td>
             <td class="text-end actions">
-              <button type="button"
-                      class="btn btn-sm btn-outline-secondary btn-view-order"
-                      data-id="${o.id}" title="Xem chi tiết">
-                <i class="bx bx-show"></i>
-              </button>
+              <div class="d-flex gap-1 justify-content-end">
+                <button type="button"
+                        class="btn btn-sm btn-outline-info btn-view-order"
+                        data-id="${o.id}" title="Xem chi tiết">
+                  <i class="bx bx-show"></i>
+                </button>
+                ${getStatusButtons(o)}
+              </div>
             </td>
           </tr>
         `);
@@ -513,7 +572,7 @@
         return;
       }
 
-      const o = await res.json();   // <-- CHỈ dùng res.json()
+      const o = await res.json();
 
       document.getElementById('modalOrderNo').textContent =
         o.orderNo ? `#${o.orderNo}` : `#${o.id}`;
@@ -577,7 +636,50 @@
     }
   }
 
-  // click nút xem
+  // ✅ FUNCTION CẬP NHẬT TRẠNG THÁI
+  async function updateOrderStatus(orderId, newStatus) {
+    const statusLabels = {
+      'CONFIRMED': 'Xác nhận',
+      'SHIPPED': 'Đã gửi hàng',
+      'COMPLETED': 'Hoàn thành',
+      'CANCELLED': 'Hủy'
+    };
+    
+    const action = statusLabels[newStatus] || newStatus;
+    
+    if (!confirm(`Bạn có chắc muốn ${action.toLowerCase()} đơn hàng này?`)) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/admin/orders/${orderId}/status`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update status');
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        alert(result.message || 'Đã cập nhật trạng thái');
+        load(); // Reload danh sách
+      } else {
+        alert(result.message || 'Không thể cập nhật trạng thái');
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Lỗi khi cập nhật trạng thái');
+    }
+  }
+
+  // ✅ Click nút xem chi tiết
   body.addEventListener('click', (e) => {
     const btn = e.target.closest('.btn-view-order');
     if (!btn) return;
@@ -585,48 +687,15 @@
     if (id) openOrderModal(id);
   });
 
-  // ✅ THÊM FUNCTION NÀY
-async function updateOrderStatus(orderId, newStatus) {
-    const statusLabels = {
-        'CONFIRMED': 'Xác nhận',
-        'SHIPPED': 'Đã gửi hàng',
-        'COMPLETED': 'Hoàn thành',
-        'CANCELLED': 'Hủy'
-    };
-    
-    const action = statusLabels[newStatus] || newStatus;
-    
-    if (!confirm(`Bạn có chắc muốn ${action.toLowerCase()} đơn hàng này?`)) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`/api/admin/orders/${orderId}/status`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ status: newStatus })
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to update status');
-        }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            alert(result.message || 'Đã cập nhật trạng thái');
-            load(); // Reload danh sách
-        } else {
-            alert(result.message || 'Không thể cập nhật trạng thái');
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Lỗi khi cập nhật trạng thái');
-    }
-}
+  // ✅ Click nút update status
+  body.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-update-status');
+    if (!btn) return;
+    const id = btn.dataset.id;
+    const status = btn.dataset.status;
+    if (id && status) updateOrderStatus(id, status);
+  });
+
   // init
   load();
 })();
