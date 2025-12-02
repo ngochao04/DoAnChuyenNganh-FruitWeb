@@ -155,14 +155,6 @@ public class OrderApiController {
         return m;
     }
 
-    // =================== TẠO ĐƠN MỚI ===================
-    @PostMapping
-    public Map<String, Object> create(@RequestBody CreateOrderRequest req) {
-        Order o = orderService.createOrder(req);
-        // Tạo xong trả lại chi tiết đơn (đã map sẵn)
-        return get(o.getId());
-    }
-
     // =================== HÀM MAP ENUM -> STRING & LABEL TIẾNG VIỆT ===================
 
     private String enumName(Enum<?> e) {
