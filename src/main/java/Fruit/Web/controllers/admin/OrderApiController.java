@@ -8,12 +8,14 @@ import Fruit.Web.models.PaymentStatus;
 import Fruit.Web.models.ProductVariant;
 import Fruit.Web.repositories.OrderRepository;
 import Fruit.Web.services.OrderService;
+import Fruit.Web.services.VNPayService;
 import Fruit.Web.services.dto.CreateOrderRequest;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,10 +28,14 @@ public class OrderApiController {
 
     private final OrderService orderService;
     private final OrderRepository orderRepo;
+    private final VNPayService vnPayService;
 
-    public OrderApiController(OrderService orderService,OrderRepository orderRepo) {
+    public OrderApiController(OrderService orderService,
+                            OrderRepository orderRepo,
+                            VNPayService vnPayService) {
         this.orderService = orderService;
         this.orderRepo = orderRepo;
+        this.vnPayService = vnPayService;
     }
 
     // =================== LIST ĐƠN HÀNG (TRANG ADMIN) ===================
@@ -262,4 +268,25 @@ public Map<String, Object> cancelOrder(@PathVariable Long id) {
     
     return result;
 }
+// =================== TẠO ĐƠN MỚI ===================
+    @PostMapping
+    public Map<String, Object> create(@RequestBody CreateOrderRequest req,
+                                     @RequestParam(required = false) String ipAddress) {
+        Order o = orderService.createOrder(req);
+        
+        Map<String, Object> result = get(o.getId());
+        
+        // ✅ NẾU CHỌN VNPAY - TẠO PAYMENT URL
+        if ("VNPAY".equals(req.paymentMethod)) {
+            try {
+                String paymentUrl = vnPayService.createPaymentUrl(o, 
+                    ipAddress != null ? ipAddress : "127.0.0.1");
+                result.put("paymentUrl", paymentUrl);
+            } catch (Exception e) {
+                System.err.println("Error creating VNPay URL: " + e.getMessage());
+            }
+        }
+        
+        return result;
+    }
 }

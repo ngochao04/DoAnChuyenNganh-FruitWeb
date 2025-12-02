@@ -887,7 +887,7 @@
     }
 }
 
-        async function handleCheckout(e) {
+async function handleCheckout(e) {
     e.preventDefault();
     
     const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -948,7 +948,7 @@
         paymentMethod: paymentMethod,
         shippingFee: SHIPPING_FEE,
         discountTotal: discount,
-        couponCode: appliedCoupon ? appliedCoupon.code : null, // ✅ THÊM COUPON CODE
+        couponCode: appliedCoupon ? appliedCoupon.code : null,
         items: cart.map(item => ({
             productId: item.productId,
             variantId: item.variantId || null,
@@ -959,7 +959,18 @@
     console.log('📦 Order data:', orderData);
     
     try {
-        const response = await fetch(`${API_BASE}/orders`, {
+        // ✅ LẤY IP ADDRESS
+        let ipAddress = '127.0.0.1';
+        try {
+            const ipResponse = await fetch('https://api.ipify.org?format=json');
+            const ipData = await ipResponse.json();
+            ipAddress = ipData.ip;
+        } catch (e) {
+            console.log('Cannot get IP, using default');
+        }
+        
+        // ✅ GỬI REQUEST VỚI IP
+        const response = await fetch(`${API_BASE}/orders?ipAddress=${ipAddress}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData)
@@ -968,16 +979,20 @@
         if (response.ok) {
             const result = await response.json();
             
+            // ✅ XÓA CART SAU KHI TẠO ĐƠN THÀNH CÔNG
             localStorage.removeItem('cart');
             
             showCustomToast(`🎉 Đặt hàng thành công! Mã đơn: ${result.orderNo}`, 'success');
             
             setTimeout(() => {
                 if (paymentMethod === 'VNPAY' && result.paymentUrl) {
+                    // ✅ CHUYỂN HƯỚNG ĐẾN VNPAY
+                    console.log('🔄 Redirecting to VNPay:', result.paymentUrl);
                     window.location.href = result.paymentUrl;
                 } else if (paymentMethod === 'MOMO' && result.paymentUrl) {
                     window.location.href = result.paymentUrl;
                 } else {
+                    // COD hoặc Banking - về trang chi tiết đơn
                     window.location.href = `/orders/${result.id}`;
                 }
             }, 1500);
