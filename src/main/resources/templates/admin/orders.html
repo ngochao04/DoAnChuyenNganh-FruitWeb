@@ -374,6 +374,7 @@
 <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
 <script src="../assets/vendor/js/menu.js"></script>
 
+<!-- Chỉ cần update phần JavaScript trong orders.html -->
 <script>
 (() => {
   const API = '/api/admin/orders';
@@ -419,24 +420,14 @@
       </div>`;
   }
 
-  // ✅ THÊM FUNCTION NÀY - Hiển thị các nút hành động theo trạng thái
+  // ✅ CẬP NHẬT - Bỏ nút xác nhận, chỉ giữ nút Gửi hàng, Hoàn thành, Hủy
   function getStatusButtons(o) {
     const status = o.status;
     let buttons = '';
     
-    // Nút Xác nhận - chỉ hiện khi đơn ở trạng thái PENDING
-    if (status === 'PENDING') {
-      buttons += `
-        <button type="button"
-                class="btn btn-sm btn-success btn-update-status"
-                data-id="${o.id}"
-                data-status="CONFIRMED"
-                title="Xác nhận đơn hàng">
-          <i class="bx bx-check"></i>
-        </button>`;
-    }
+    // ✅ BỎ NÚT XÁC NHẬN - Đơn hàng tự động CONFIRMED rồi
     
-    // Nút Gửi hàng - chỉ hiện khi đã xác nhận
+    // Nút Gửi hàng - hiện khi đã xác nhận
     if (status === 'CONFIRMED') {
       buttons += `
         <button type="button"
@@ -448,7 +439,7 @@
         </button>`;
     }
     
-    // Nút Hoàn thành - chỉ hiện khi đã gửi hàng
+    // Nút Hoàn thành - hiện khi đã gửi hàng
     if (status === 'SHIPPED') {
       buttons += `
         <button type="button"
@@ -460,8 +451,8 @@
         </button>`;
     }
     
-    // Nút Hủy - hiện cho tất cả trạng thái trừ COMPLETED và CANCELLED
-    if (status !== 'COMPLETED' && status !== 'CANCELLED') {
+    // Nút Hủy - hiện cho đơn PENDING, CONFIRMED (chưa gửi hàng)
+    if (status === 'PENDING' || status === 'CONFIRMED') {
       buttons += `
         <button type="button"
                 class="btn btn-sm btn-danger btn-update-status"
@@ -639,7 +630,6 @@
   // ✅ FUNCTION CẬP NHẬT TRẠNG THÁI
   async function updateOrderStatus(orderId, newStatus) {
     const statusLabels = {
-      'CONFIRMED': 'Xác nhận',
       'SHIPPED': 'Đã gửi hàng',
       'COMPLETED': 'Hoàn thành',
       'CANCELLED': 'Hủy'

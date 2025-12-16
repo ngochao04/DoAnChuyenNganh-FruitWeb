@@ -169,32 +169,53 @@ public class UserOrderApiController {
             default:       return status.name();
         }
     }
+
     /**
- * ✅ HỦY ĐƠN HÀNG (USER)
- */
-@PatchMapping("/{id}/cancel")
-public Map<String, Object> cancelOrder(@PathVariable Long id) {
-    Order order = orderRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
-    
-    // Kiểm tra trạng thái
-    if (order.getStatus() != OrderStatus.PENDING && 
-        order.getStatus() != OrderStatus.CONFIRMED) {
-        Map<String, Object> error = new LinkedHashMap<>();
-        error.put("success", false);
-        error.put("message", "Không thể hủy đơn hàng đã " + toStatusLabel(order.getStatus()).toLowerCase());
-        return error;
+     * ✅ HỦY ĐƠN HÀNG (USER) - CHO PHÉP HỦY PENDING VÀ CONFIRMED
+     */
+    @PatchMapping("/{id}/cancel")
+    public Map<String, Object> cancelOrder(@PathVariable Long id) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn hàng"));
+        
+        // ✅ CHO PHÉP HỦY ĐƠN PENDING VÀ CONFIRMED
+        // Chỉ không cho hủy khi đã SHIPPED, COMPLETED, hoặc đã CANCELLED
+        if (order.getStatus() == OrderStatus.SHIPPED) {
+            Map<String, Object> error = new LinkedHashMap<>();
+            error.put("success", false);
+            error.put("message", "Không thể hủy đơn hàng đã gửi đi. Vui lòng liên hệ shop để được hỗ trợ.");
+            return error;
+        }
+        
+        if (order.getStatus() == OrderStatus.COMPLETED) {
+            Map<String, Object> error = new LinkedHashMap<>();
+            error.put("success", false);
+            error.put("message", "Không thể hủy đơn hàng đã hoàn thành.");
+            return error;
+        }
+        
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            Map<String, Object> error = new LinkedHashMap<>();
+            error.put("success", false);
+            error.put("message", "Đơn hàng này đã được hủy trước đó.");
+            return error;
+        }
+        
+        // ✅ CHO PHÉP HỦY PENDING VÀ CONFIRMED
+        System.out.println("🚫 User cancelling order: " + order.getOrderNo() + 
+                         " (Status: " + order.getStatus() + ")");
+        
+        // Cập nhật trạng thái
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+        
+        // TODO: Hoàn lại tồn kho (nếu cần)
+        
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("success", true);
+        result.put("message", "Đã hủy đơn hàng thành công");
+        result.put("order", mapOrderDetail(order));
+        
+        return result;
     }
-    
-    // Cập nhật trạng thái
-    order.setStatus(OrderStatus.CANCELLED);
-    orderRepository.save(order);
-    
-    Map<String, Object> result = new LinkedHashMap<>();
-    result.put("success", true);
-    result.put("message", "Đã hủy đơn hàng thành công");
-    result.put("order", mapOrderDetail(order));
-    
-    return result;
-}
 }

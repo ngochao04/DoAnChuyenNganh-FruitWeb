@@ -19,8 +19,8 @@ public class VNPayUtil {
             hmac512.init(secretKey);
             byte[] result = hmac512.doFinal(data.getBytes(StandardCharsets.UTF_8));
             
-            // Convert to hex string
-            StringBuilder sb = new StringBuilder(2 * result.length);
+            // Convert sang hex (chữ thường)
+            StringBuilder sb = new StringBuilder(result.length * 2);
             for (byte b : result) {
                 sb.append(String.format("%02x", b & 0xff));
             }
@@ -31,78 +31,91 @@ public class VNPayUtil {
     }
 
     /**
-     * ✅ TẠO CHUỖI HASH TỪ CÁC THAM SỐ
-     * Quan trọng: Phải sắp xếp theo thứ tự alphabet
+     * ✅ TẠO HASH TỪ CÁC PARAMS
+     * QUY TẮC VNPAY:
+     * 1. Sắp xếp params theo thứ tự alphabet (A-Z)
+     * 2. Loại bỏ vnp_SecureHash và vnp_SecureHashType
+     * 3. Loại bỏ các field có giá trị rỗng
+     * 4. Nối các param: key1=value1&key2=value2&...
+     * 5. HMAC SHA512 với Hash Secret
      */
     public static String hashAllFields(Map<String, String> fields, String hashSecret) {
-        // 1. Sắp xếp các key theo alphabet
-        List<String> fieldNames = new ArrayList<>(fields.keySet());
-        Collections.sort(fieldNames);
+        // Tạo TreeMap để tự động sort theo alphabet
+        Map<String, String> sortedFields = new TreeMap<>();
         
-        // 2. Tạo chuỗi query string
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
-        
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
-            String fieldValue = fields.get(fieldName);
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
             
-            // Chỉ thêm field có giá trị không rỗng
-            if (fieldValue != null && fieldValue.length() > 0) {
-                sb.append(fieldName);
-                sb.append("=");
-                sb.append(fieldValue);
-                
-                if (itr.hasNext()) {
-                    sb.append("&");
-                }
+            // ✅ BỎ QUA: vnp_SecureHash, vnp_SecureHashType và giá trị rỗng
+            if (value != null && !value.isEmpty() 
+                && !key.equals("vnp_SecureHash") 
+                && !key.equals("vnp_SecureHashType")) {
+                sortedFields.put(key, value);
             }
         }
         
-        // 3. Tạo HMAC SHA512
-        return hmacSHA512(hashSecret, sb.toString());
+        // Tạo chuỗi hash data
+        StringBuilder hashData = new StringBuilder();
+        boolean isFirst = true;
+        
+        for (Map.Entry<String, String> entry : sortedFields.entrySet()) {
+            if (!isFirst) {
+                hashData.append('&');
+            }
+            hashData.append(entry.getKey());
+            hashData.append('=');
+            hashData.append(entry.getValue());
+            isFirst = false;
+        }
+        
+        String hashDataStr = hashData.toString();
+        
+        // ✅ DEBUG - In ra để kiểm tra
+        System.out.println("=== HASH DATA DEBUG ===");
+        System.out.println("Hash Data String: " + hashDataStr);
+        System.out.println("Hash Secret: " + hashSecret);
+        String hash = hmacSHA512(hashSecret, hashDataStr);
+        System.out.println("Generated Hash: " + hash);
+        System.out.println("======================");
+        
+        return hash;
     }
 
     /**
-     * ✅ TẠO URL THANH TOÁN
-     * Encoding đúng chuẩn UTF-8
+     * ✅ TẠO PAYMENT URL
      */
     public static String getPaymentURL(Map<String, String> params, String baseUrl) 
             throws UnsupportedEncodingException {
         
-        // Sắp xếp params
+        // Sort params theo alphabet
         List<String> fieldNames = new ArrayList<>(params.keySet());
         Collections.sort(fieldNames);
         
         StringBuilder query = new StringBuilder();
-        Iterator<String> itr = fieldNames.iterator();
+        boolean isFirst = true;
         
-        while (itr.hasNext()) {
-            String fieldName = itr.next();
+        for (String fieldName : fieldNames) {
             String fieldValue = params.get(fieldName);
             
-            if (fieldValue != null && fieldValue.length() > 0) {
-                // ✅ QUAN TRỌNG: URLEncode với UTF-8
+            if (fieldValue != null && !fieldValue.isEmpty()) {
+                if (!isFirst) {
+                    query.append('&');
+                }
+                // ✅ URL Encode
                 query.append(URLEncoder.encode(fieldName, "UTF-8"));
                 query.append('=');
                 query.append(URLEncoder.encode(fieldValue, "UTF-8"));
-                
-                if (itr.hasNext()) {
-                    query.append('&');
-                }
+                isFirst = false;
             }
         }
         
-        return baseUrl + "?" + query.toString();
-    }
-
-    public static String getRandomNumber(int len) {
-        Random rnd = new Random();
-        String chars = "0123456789";
-        StringBuilder sb = new StringBuilder(len);
-        for (int i = 0; i < len; i++) {
-            sb.append(chars.charAt(rnd.nextInt(chars.length())));
-        }
-        return sb.toString();
+        String finalUrl = baseUrl + "?" + query.toString();
+        
+        System.out.println("=== PAYMENT URL ===");
+        System.out.println(finalUrl);
+        System.out.println("==================");
+        
+        return finalUrl;
     }
 }

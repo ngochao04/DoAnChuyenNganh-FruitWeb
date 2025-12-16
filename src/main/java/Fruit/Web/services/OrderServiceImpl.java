@@ -62,97 +62,115 @@ public class OrderServiceImpl implements OrderService {
         return o;
     }
 
-    // ===== TẠO ĐƠN (GIỮ NGUYÊN LOGIC CŨ) =====
-        @Override
-        @Transactional
-        public Order createOrder(CreateOrderRequest req) {
-            Order order = new Order();
-            
-            // Generate unique order number
-            order.setOrderNo("ORD" + System.currentTimeMillis());
-            
-            // Set customer info
-            order.setUserId(req.userId);
-            order.setRecipientName(req.recipientName);
-            order.setPhone(req.phone);
-            order.setAddressLine1(req.addressLine1);
-            order.setWard(req.ward);
-            order.setDistrict(req.district);
-            order.setProvince(req.province);
-            order.setNote(req.note);
-            
-            // Set payment info
-            order.setPaymentMethod(PaymentMethod.valueOf(req.paymentMethod));
-            order.setPaymentStatus(PaymentStatus.UNPAID);
+    // ===== TẠO ĐƠN - TỰ ĐỘNG XÁC NHẬN =====
+    @Override
+    @Transactional
+    public Order createOrder(CreateOrderRequest req) {
+        Order order = new Order();
+        
+        // Generate unique order number
+        order.setOrderNo("ORD" + System.currentTimeMillis());
+        
+        // Set customer info
+        order.setUserId(req.userId);
+        order.setRecipientName(req.recipientName);
+        order.setPhone(req.phone);
+        order.setAddressLine1(req.addressLine1);
+        order.setWard(req.ward);
+        order.setDistrict(req.district);
+        order.setProvince(req.province);
+        order.setNote(req.note);
+        
+        // Set payment info
+        PaymentMethod paymentMethod = PaymentMethod.valueOf(req.paymentMethod);
+        order.setPaymentMethod(paymentMethod);
+        order.setPaymentStatus(PaymentStatus.UNPAID);
+        
+        // ✅ TỰ ĐỘNG XÁC NHẬN ĐƠN HÀNG
+        // - Với COD: Tự động CONFIRMED vì đã đặt hàng thành công
+        // - Với VNPay/MoMo: Để PENDING, sẽ chuyển sang CONFIRMED sau khi thanh toán
+        if (paymentMethod == PaymentMethod.COD) {
+            order.setStatus(OrderStatus.CONFIRMED);
+            System.out.println("✅ COD Order - Auto CONFIRMED: " + order.getOrderNo());
+        } else {
             order.setStatus(OrderStatus.PENDING);
+            System.out.println("⏳ Online Payment Order - PENDING until paid: " + order.getOrderNo());
+        }
+        
+        // Calculate totals
+        BigDecimal itemsTotal = BigDecimal.ZERO;
+        
+        for (CreateOrderRequest.Item item : req.items) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProductId(item.productId);
+            orderItem.setQuantity(item.quantity);
+            orderItem.setDiscount(BigDecimal.ZERO);
             
-            // Calculate totals
-            BigDecimal itemsTotal = BigDecimal.ZERO;
-            
-            for (CreateOrderRequest.Item item : req.items) {
-                OrderItem orderItem = new OrderItem();
-                orderItem.setOrder(order);
-                orderItem.setProductId(item.productId);
-                orderItem.setQuantity(item.quantity);
-                orderItem.setDiscount(BigDecimal.ZERO);
+            // Get variant or product
+            if (item.variantId != null) {
+                ProductVariant variant = variantRepo.findById(item.variantId)
+                    .orElseThrow(() -> new RuntimeException("Variant not found"));
                 
-                // Get variant or product
-                if (item.variantId != null) {
-                    ProductVariant variant = variantRepo.findById(item.variantId)
-                        .orElseThrow(() -> new RuntimeException("Variant not found"));
-                    
-                    // Check stock availability
-                    if (!variant.getInStock() || variant.getStockQty() < item.quantity) {
-                        throw new RuntimeException("Insufficient stock for variant: " + variant.getOptionName());
-                    }
-                    
-                    orderItem.setVariant(variant);
-                    orderItem.setUnitPrice(variant.getPrice());
-                    orderItem.setTitleSnapshot(variant.getOptionName()); // ✅ Fix: getOptionName() thay vì getUnit()
-                    orderItem.setUnit(variant.getUnit());
-                    
-                    // Calculate line total
-                    orderItem.setLineTotal(variant.getPrice().multiply(BigDecimal.valueOf(item.quantity)));
-                    
-                    // Update stock (adjust negative)
-                    inventoryService.adjustStock(variant.getId(), -item.quantity, "Bán hàng - " + order.getOrderNo());
-                    
-                } else {
-                    // Handle base product (no variant)
-                    Product product = productRepo.findById(item.productId)
-                        .orElseThrow(() -> new RuntimeException("Product not found"));
-                    
-                    // Check stock availability
-                    if (product.getBaseStockQty() < item.quantity) {
-                        throw new RuntimeException("Insufficient stock for product: " + product.getName());
-                    }
-                    
-                    orderItem.setUnitPrice(product.getBasePrice());
-                    orderItem.setTitleSnapshot(product.getName());
-                    
-                    // Calculate line total
-                    orderItem.setLineTotal(product.getBasePrice().multiply(BigDecimal.valueOf(item.quantity)));
-                    
-                    // Update base stock (manual update vì không có variant)
-                    product.setBaseStockQty(product.getBaseStockQty() - item.quantity);
-                    productRepo.save(product);
+                // Check stock availability
+                if (!variant.getInStock() || variant.getStockQty() < item.quantity) {
+                    throw new RuntimeException("Insufficient stock for variant: " + variant.getOptionName());
                 }
                 
-                itemsTotal = itemsTotal.add(orderItem.getLineTotal());
-                order.getItems().add(orderItem);
+                orderItem.setVariant(variant);
+                orderItem.setUnitPrice(variant.getPrice());
+                orderItem.setTitleSnapshot(variant.getOptionName());
+                orderItem.setUnit(variant.getUnit());
+                
+                // Calculate line total
+                orderItem.setLineTotal(variant.getPrice().multiply(BigDecimal.valueOf(item.quantity)));
+                
+                // Update stock (adjust negative)
+                inventoryService.adjustStock(variant.getId(), -item.quantity, "Bán hàng - " + order.getOrderNo());
+                
+            } else {
+                // Handle base product (no variant)
+                Product product = productRepo.findById(item.productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+                
+                // Check stock availability
+                if (product.getBaseStockQty() < item.quantity) {
+                    throw new RuntimeException("Insufficient stock for product: " + product.getName());
+                }
+                
+                orderItem.setUnitPrice(product.getBasePrice());
+                orderItem.setTitleSnapshot(product.getName());
+                
+                // Calculate line total
+                orderItem.setLineTotal(product.getBasePrice().multiply(BigDecimal.valueOf(item.quantity)));
+                
+                // Update base stock
+                product.setBaseStockQty(product.getBaseStockQty() - item.quantity);
+                productRepo.save(product);
             }
             
-            // Set order totals
-            order.setItemsTotal(itemsTotal);
-            order.setShippingFee(req.shippingFee != null ? req.shippingFee : BigDecimal.valueOf(30000));
-            order.setDiscountTotal(req.discountTotal != null ? req.discountTotal : BigDecimal.ZERO);
-            order.setGrandTotal(
-                itemsTotal
-                    .add(order.getShippingFee())
-                    .subtract(order.getDiscountTotal())
-            );
-            
-            // Save order
-            return orderRepo.save(order);
+            itemsTotal = itemsTotal.add(orderItem.getLineTotal());
+            order.getItems().add(orderItem);
         }
+        
+        // Set order totals
+        order.setItemsTotal(itemsTotal);
+        order.setShippingFee(req.shippingFee != null ? req.shippingFee : BigDecimal.valueOf(30000));
+        order.setDiscountTotal(req.discountTotal != null ? req.discountTotal : BigDecimal.ZERO);
+        order.setGrandTotal(
+            itemsTotal
+                .add(order.getShippingFee())
+                .subtract(order.getDiscountTotal())
+        );
+        
+        // Save order
+        Order savedOrder = orderRepo.save(order);
+        
+        // Log trạng thái đơn hàng
+        System.out.println("📦 Order created: " + savedOrder.getOrderNo() + 
+                         " | Status: " + savedOrder.getStatus() + 
+                         " | Payment: " + savedOrder.getPaymentMethod());
+        
+        return savedOrder;
+    }
 }

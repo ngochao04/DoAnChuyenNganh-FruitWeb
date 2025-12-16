@@ -22,57 +22,51 @@ public class VNPayService {
      * ✅ TẠO URL THANH TOÁN VNPAY - ĐÃ FIX
      */
     public String createPaymentUrl(Order order, String ipAddress) 
-            throws UnsupportedEncodingException {
-        
-        // 1. Tạo Map params - CHỈ CÁC FIELD CẦN THIẾT
-        Map<String, String> vnpParams = new TreeMap<>(); // TreeMap tự động sort theo key
-        
-        vnpParams.put("vnp_Version", vnPayConfig.getVersion());
-        vnpParams.put("vnp_Command", vnPayConfig.getCommand());
-        vnpParams.put("vnp_TmnCode", vnPayConfig.getTmnCode());
-        
-        // ✅ SỐ TIỀN: Nhân 100, không có dấu phẩy, không có thập phân
-        long amount = order.getGrandTotal().longValue() * 100;
-        vnpParams.put("vnp_Amount", String.valueOf(amount));
-        
-        vnpParams.put("vnp_CurrCode", "VND");
-        vnpParams.put("vnp_TxnRef", order.getOrderNo()); // Mã giao dịch - UNIQUE
-        vnpParams.put("vnp_OrderInfo", "Thanh toan don hang " + order.getOrderNo());
-        vnpParams.put("vnp_OrderType", vnPayConfig.getOrderType());
-        vnpParams.put("vnp_Locale", "vn");
-        vnpParams.put("vnp_ReturnUrl", vnPayConfig.getReturnUrl());
-        vnpParams.put("vnp_IpAddr", ipAddress);
-        
-        // ✅ THỜI GIAN: GMT+7 (Asia/Ho_Chi_Minh)
-        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        formatter.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
-        
-        String vnpCreateDate = formatter.format(cld.getTime());
-        vnpParams.put("vnp_CreateDate", vnpCreateDate);
-        
-        // Hết hạn sau 15 phút
-        cld.add(Calendar.MINUTE, 15);
-        String vnpExpireDate = formatter.format(cld.getTime());
-        vnpParams.put("vnp_ExpireDate", vnpExpireDate);
-        
-        // ✅ QUAN TRỌNG: TẠO SECURE HASH
-        String signValue = VNPayUtil.hashAllFields(vnpParams, vnPayConfig.getHashSecret());
-        vnpParams.put("vnp_SecureHash", signValue);
-        
-        // ✅ DEBUG - In ra để kiểm tra
-        System.out.println("=== VNPAY PAYMENT URL DEBUG ===");
-        System.out.println("TmnCode: " + vnpParams.get("vnp_TmnCode"));
-        System.out.println("Amount: " + vnpParams.get("vnp_Amount"));
-        System.out.println("TxnRef: " + vnpParams.get("vnp_TxnRef"));
-        System.out.println("CreateDate: " + vnpParams.get("vnp_CreateDate"));
-        System.out.println("Hash Secret Length: " + vnPayConfig.getHashSecret().length());
-        System.out.println("SecureHash: " + signValue);
-        System.out.println("================================");
-        
-        // Tạo URL
-        return VNPayUtil.getPaymentURL(vnpParams, vnPayConfig.getVnpUrl());
-    }
+        throws UnsupportedEncodingException {
+    
+    // 1. Tạo params - Dùng TreeMap để tự động sort
+    Map<String, String> vnpParams = new TreeMap<>();
+    
+    vnpParams.put("vnp_Version", vnPayConfig.getVersion());
+    vnpParams.put("vnp_Command", vnPayConfig.getCommand());
+    vnpParams.put("vnp_TmnCode", vnPayConfig.getTmnCode());
+    
+    // ✅ Amount: Nhân 100, KHÔNG có dấu phẩy
+    long amount = order.getGrandTotal().longValue() * 100;
+    vnpParams.put("vnp_Amount", String.valueOf(amount));
+    
+    vnpParams.put("vnp_CurrCode", "VND");
+    vnpParams.put("vnp_TxnRef", order.getOrderNo()); // Mã đơn hàng - UNIQUE
+    vnpParams.put("vnp_OrderInfo", "Thanh toan don hang " + order.getOrderNo());
+    vnpParams.put("vnp_OrderType", vnPayConfig.getOrderType());
+    vnpParams.put("vnp_Locale", "vn");
+    vnpParams.put("vnp_ReturnUrl", vnPayConfig.getReturnUrl());
+    vnpParams.put("vnp_IpAddr", ipAddress);
+    
+    // ✅ Thời gian GMT+7
+    Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+    formatter.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+    
+    String vnpCreateDate = formatter.format(cld.getTime());
+    vnpParams.put("vnp_CreateDate", vnpCreateDate);
+    
+    // Hết hạn sau 15 phút
+    cld.add(Calendar.MINUTE, 15);
+    String vnpExpireDate = formatter.format(cld.getTime());
+    vnpParams.put("vnp_ExpireDate", vnpExpireDate);
+    
+    // ✅ QUAN TRỌNG: Tạo secure hash TRƯỚC khi add vào params
+    String signValue = VNPayUtil.hashAllFields(vnpParams, vnPayConfig.getHashSecret());
+    vnpParams.put("vnp_SecureHash", signValue);
+    
+    // ✅ Debug - In toàn bộ params
+    System.out.println("=== ALL VNPAY PARAMS ===");
+    vnpParams.forEach((k, v) -> System.out.println(k + " = " + v));
+    System.out.println("=======================");
+    
+    return VNPayUtil.getPaymentURL(vnpParams, vnPayConfig.getVnpUrl());
+}
 
     /**
      * ✅ VERIFY CALLBACK TỪ VNPAY

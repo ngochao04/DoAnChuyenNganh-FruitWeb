@@ -517,13 +517,15 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Kiểm tra đăng nhập
-            const user = JSON.parse(localStorage.getItem('user') || 'null');
-            if (!user || !user.email) {
-                alert('Vui lòng đăng nhập để thanh toán!');
-                window.location.href = '/login';
-                return;
-            }
+    // Kiểm tra đăng nhập
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+        if (!user || !user.email) {
+            alert('Vui lòng đăng nhập để thanh toán!');
+            // ✅ Lưu URL hiện tại để redirect lại sau khi đăng nhập
+            localStorage.setItem('redirectAfterLogin', window.location.pathname);
+            window.location.href = '/login';
+            return;
+        }
             
             cart = JSON.parse(localStorage.getItem('cart') || '[]');
             console.log('Cart loaded:', cart); // Debug

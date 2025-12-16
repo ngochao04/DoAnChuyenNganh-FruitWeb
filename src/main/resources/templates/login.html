@@ -291,7 +291,14 @@
                     showToast('Đăng nhập thành công!', 'success');
                     
                     setTimeout(() => {
-                        window.location.href = '/';
+                        // ✅ Kiểm tra có URL redirect không
+                        const redirectUrl = localStorage.getItem('redirectAfterLogin');
+                        if (redirectUrl) {
+                            localStorage.removeItem('redirectAfterLogin');
+                            window.location.href = redirectUrl;
+                        } else {
+                            window.location.href = '/';
+                        }
                     }, 1000);
                 } else {
                     showToast(data.message || 'Đăng nhập thất bại', 'error');

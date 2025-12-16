@@ -257,7 +257,10 @@
                 });
             }
             
-         container.innerHTML = `
+            // ✅ Hiển thị nút hủy cho PENDING và CONFIRMED (chưa gửi hàng)
+            const canCancel = order.status === 'PENDING' || order.status === 'CONFIRMED';
+            
+            container.innerHTML = `
                 <!-- Order Header -->
                 <div class="info-card">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -269,6 +272,14 @@
                             ${order.statusLabel}
                         </span>
                     </div>
+                    
+                    ${order.status === 'CONFIRMED' ? `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Đơn hàng đã được xác nhận và đang chờ shop gửi hàng. 
+                            Bạn vẫn có thể hủy đơn trước khi hàng được gửi đi.
+                        </div>
+                    ` : ''}
                 </div>
 
                 <div class="row">
@@ -346,10 +357,18 @@
                     <a href="/orders" class="btn btn-outline-primary">
                         <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
                     </a>
-                    ${order.status === 'PENDING' ? `
+                    ${canCancel ? `
                         <button class="btn btn-danger" onclick="cancelOrder(${order.id})">
                             <i class="fas fa-times me-2"></i>Hủy đơn hàng
                         </button>
+                    ` : ''}
+                    ${order.status === 'SHIPPED' ? `
+                        <span class="text-muted d-block mt-2">
+                            <small>
+                                <i class="fas fa-info-circle"></i>
+                                Đơn hàng đã được gửi đi, không thể hủy. Vui lòng liên hệ shop nếu cần hỗ trợ.
+                            </small>
+                        </span>
                     ` : ''}
                 </div>
             `;
@@ -387,34 +406,39 @@
         }
 
         async function cancelOrder(orderId) {
-    if (!confirm('Bạn có chắc muốn hủy đơn hàng này?')) return;
-    
-    try {
-        const response = await fetch(`/api/orders/${orderId}/cancel`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
+            if (!confirm('Bạn có chắc muốn hủy đơn hàng này?\n\n⚠️ Lưu ý: Hành động này không thể hoàn tác.')) {
+                return;
             }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Failed to cancel order');
+            
+            try {
+                console.log('🚫 Cancelling order:', orderId);
+                
+                const response = await fetch(`/api/orders/${orderId}/cancel`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to cancel order');
+                }
+                
+                const result = await response.json();
+                console.log('📦 Cancel result:', result);
+                
+                if (result.success) {
+                    alert('✅ ' + (result.message || 'Đã hủy đơn hàng thành công'));
+                    location.reload(); // Reload để cập nhật trạng thái
+                } else {
+                    alert('❌ ' + (result.message || 'Không thể hủy đơn hàng'));
+                }
+                
+            } catch (error) {
+                console.error('❌ Error cancelling order:', error);
+                alert('❌ Không thể hủy đơn hàng. Vui lòng thử lại sau hoặc liên hệ shop để được hỗ trợ.');
+            }
         }
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            alert(result.message || 'Đã hủy đơn hàng thành công');
-            location.reload(); // Reload để cập nhật trạng thái
-        } else {
-            alert(result.message || 'Không thể hủy đơn hàng');
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        alert('Không thể hủy đơn hàng. Vui lòng thử lại sau.');
-    }
-}
 
         // Update cart count
         const cart = JSON.parse(localStorage.getItem('cart') || '[]');
