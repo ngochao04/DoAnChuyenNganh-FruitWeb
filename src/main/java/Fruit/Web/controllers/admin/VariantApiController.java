@@ -63,6 +63,9 @@ public class VariantApiController {
 
     @DeleteMapping("/variants/{id}")
     public void delete(@PathVariable Long id) {
+        if (id < 0) {
+        throw new IllegalArgumentException("Không thể xóa sản phẩm gốc từ đây. Vui lòng vào trang Sản phẩm.");
+        }   
         inv.deleteVariant(id);
     }
 
@@ -71,13 +74,19 @@ public class VariantApiController {
     public ProductVariant adjust(@PathVariable Long id,
                                  @RequestParam int delta,
                                  @RequestParam(required = false) String note) {
+        if (id < 0) {
+        throw new IllegalArgumentException("Không thể điều chỉnh tồn kho sản phẩm gốc từ đây. Vui lòng vào trang Sản phẩm.");
+        }                            
         return inv.adjustStock(id, delta, note);
     }
 
     @PatchMapping("/variants/{id}/in-stock")
     public ProductVariant toggle(@PathVariable Long id,
                                  @RequestParam("v") boolean value) {
-        return inv.setInStock(id, value);
+        if (id < 0) {
+        throw new IllegalArgumentException("Không thể thay đổi trạng thái sản phẩm gốc từ đây. Vui lòng vào trang Sản phẩm.");
+        }
+    return inv.setInStock(id, value);
     }
 
     @GetMapping("/variants/{id}/logs")

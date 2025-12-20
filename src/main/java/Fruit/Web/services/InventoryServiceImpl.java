@@ -87,6 +87,31 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional
     public ProductVariant adjustStock(Long variantId, int delta, String note) {
+        // ✅ Xử lý cho sản phẩm base (id âm)
+        if (variantId < 0) {
+            Long productId = -variantId;
+            Product p = productRepo.findById(productId)
+                    .orElseThrow(() -> new NoSuchElementException("Product not found"));
+            
+            int current = p.getBaseStockQty() == null ? 0 : p.getBaseStockQty();
+            int updated = current + delta;
+            if (updated < 0) updated = 0;
+            
+            p.setBaseStockQty(updated);
+            p.setUpdatedAt(OffsetDateTime.now());
+            productRepo.save(p);
+            
+            // Không thể log cho base product vì không có variant
+            // TODO: Có thể tạo bảng riêng cho inventory log của base product
+            
+            // Trả về một ProductVariant ảo để frontend không bị lỗi
+            ProductVariant dummy = new ProductVariant();
+            dummy.setId(variantId);
+            dummy.setStockQty(updated);
+            return dummy;
+        }
+        
+        // Xử lý bình thường cho variant
         ProductVariant v = getVariant(variantId);
         int current = v.getStockQty() == null ? 0 : v.getStockQty();
         int updated = current + delta;
@@ -108,6 +133,22 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @Transactional
     public ProductVariant setInStock(Long variantId, boolean value) {
+        // ✅ Xử lý cho sản phẩm base
+        if (variantId < 0) {
+            Long productId = -variantId;
+            Product p = productRepo.findById(productId)
+                    .orElseThrow(() -> new NoSuchElementException("Product not found"));
+            
+            p.setActive(value);
+            p.setUpdatedAt(OffsetDateTime.now());
+            productRepo.save(p);
+            
+            ProductVariant dummy = new ProductVariant();
+            dummy.setId(variantId);
+            dummy.setInStock(value);
+            return dummy;
+        }
+        
         ProductVariant v = getVariant(variantId);
         v.setInStock(value);
         v.setUpdatedAt(OffsetDateTime.now());

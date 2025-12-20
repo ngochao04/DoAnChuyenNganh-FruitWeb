@@ -162,12 +162,41 @@
   const navSearch = $('navSearch');
 
   const state = { page: 0, size: 10, q: '' };
-  let debounce;
 
   const fmt = n => (n==null) ? '-' : new Intl.NumberFormat('vi-VN').format(n);
   const esc = s => (s ?? '').toString().replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  
   const badge = v => v ? '<span class="badge bg-label-success">CÒN BÁN</span>' : '<span class="badge bg-label-secondary">TẮT BÁN</span>';
   const whenUpdated = v => v?.updatedAt ? new Date(v.updatedAt).toLocaleString('vi-VN') : '-';
+  
+  // ✅ Kiểm tra có phải base product không
+  const isBaseProduct = (v) => v.id < 0 || v.sku === 'BASE';
+  
+  const renderActions = (v) => {
+    const pid = v.productId;
+    const vid = v.id;
+    const isBase = isBaseProduct(v);
+    
+    if (isBase) {
+      // Base product - chỉ có nút sửa và điều chỉnh tồn
+      return `
+        <div class="btn-group">
+          <a class="btn btn-sm btn-outline-secondary" href="/admin/products/${pid}" title="Sửa sản phẩm"><i class="bx bx-edit-alt"></i></a>
+          <button class="btn btn-sm btn-outline-secondary" onclick="adjustBase(${vid})" title="Điều chỉnh tồn"><i class="bx bx-transfer-alt"></i></button>
+        </div>
+      `;
+    }
+    
+    // Variant - đầy đủ chức năng
+    return `
+      <div class="btn-group">
+        <a class="btn btn-sm btn-outline-secondary" href="/admin/products/${pid}/variants" title="Sửa nhanh"><i class="bx bx-edit-alt"></i></a>
+        <button class="btn btn-sm btn-outline-secondary" onclick="adjust(${vid})" title="Điều chỉnh tồn"><i class="bx bx-transfer-alt"></i></button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggle(${vid}, ${!v.inStock})" title="Bật/Tắt bán"><i class="bx bx-toggle-${v.inStock?'right':'left'}"></i></button>
+        <button class="btn btn-sm btn-outline-danger" onclick="delVar(${vid})" title="Xoá"><i class="bx bx-trash"></i></button>
+      </div>
+    `;
+  };
 
   async function load(){
     const url = `${API}?page=${state.page}&size=${state.size}${state.q ? `&q=${encodeURIComponent(state.q)}` : ''}`;
@@ -186,24 +215,21 @@
 
     pg.content.forEach((v, i) => {
       const idx = pg.pageable.pageNumber * pg.size + i + 1;
+      const isBase = isBaseProduct(v);
+      const skuDisplay = isBase ? `<span class="badge badge-base">${esc(v.sku)}</span>` : `<code>${esc(v.sku ?? '-')}</code>`;
+      const optionDisplay = isBase ? `<em class="text-muted">${esc(v.optionName)}</em>` : esc(v.optionName ?? '-');
+      
       body.insertAdjacentHTML('beforeend', `
         <tr>
           <td>${idx}</td>
           <td><a href="/admin/products/${v.productId}/variants"><strong>${esc(v.productName)}</strong></a></td>
-          <td><code>${esc(v.sku ?? '-')}</code></td>
-          <td>${esc(v.optionName ?? '-')}</td>
+          <td>${skuDisplay}</td>
+          <td>${optionDisplay}</td>
           <td class="text-end">${fmt(v.price)}</td>
           <td class="text-end">${v.stockQty ?? 0}</td>
           <td>${badge(v.inStock)}</td>
           <td>${whenUpdated(v)}</td>
-          <td class="text-end actions">
-            <div class="btn-group">
-              <a class="btn btn-sm btn-outline-secondary" href="/admin/products/${v.productId}/variants" title="Sửa nhanh"><i class="bx bx-edit-alt"></i></a>
-              <button class="btn btn-sm btn-outline-secondary" onclick="adjust(${v.id})" title="Điều chỉnh tồn"><i class="bx bx-transfer-alt"></i></button>
-              <button class="btn btn-sm btn-outline-secondary" onclick="toggle(${v.id}, ${!v.inStock})" title="Bật/Tắt bán"><i class="bx bx-toggle-${v.inStock?'right':'left'}"></i></button>
-              <button class="btn btn-sm btn-outline-danger" onclick="delVar(${v.id})" title="Xoá"><i class="bx bx-trash"></i></button>
-            </div>
-          </td>
+          <td class="text-end actions">${renderActions(v)}</td>
         </tr>
       `);
     });
@@ -231,6 +257,7 @@
   btnPrev.addEventListener('click', () => { if(state.page>0){ state.page--; load(); } });
   btnNext.addEventListener('click', () => { state.page++; load(); });
 
+  // ✅ Điều chỉnh tồn cho variant
   window.adjust = async (id) => {
     const delta = prompt('Nhập số điều chỉnh (vd: +10 hoặc -5):', '0');
     if(delta == null) return;
@@ -238,9 +265,24 @@
     if(Number.isNaN(n)) return alert('Giá trị không hợp lệ');
     const note = prompt('Ghi chú (tuỳ chọn):', '') || '';
     const res = await fetch(
-  `/api/admin/variants/${id}/stock?delta=${encodeURIComponent(n)}${note?`&note=${encodeURIComponent(note)}`:''}`,
-  { method: 'PATCH' }
+      `/api/admin/variants/${id}/stock?delta=${encodeURIComponent(n)}${note?`&note=${encodeURIComponent(note)}`:''}`,
+      { method: 'PATCH' }
     );
+    if(res.ok) load(); else alert('Không thể điều chỉnh tồn kho');
+  };
+
+  // ✅ Điều chỉnh tồn cho base product
+  window.adjustBase = async (id) => {
+    const delta = prompt('Nhập số điều chỉnh tồn kho cơ bản (vd: +10 hoặc -5):', '0');
+    if(delta == null) return;
+    const n = Number(delta);
+    if(Number.isNaN(n)) return alert('Giá trị không hợp lệ');
+    const note = prompt('Ghi chú (tuỳ chọn):', 'Điều chỉnh tồn kho base product') || '';
+    const res = await fetch(
+      `/api/admin/variants/${id}/stock?delta=${encodeURIComponent(n)}${note?`&note=${encodeURIComponent(note)}`:''}`,
+      { method: 'PATCH' }
+    );
+    if(res.ok) load(); else alert('Không thể điều chỉnh tồn kho');
   };
 
   window.toggle = async (id, v) => {

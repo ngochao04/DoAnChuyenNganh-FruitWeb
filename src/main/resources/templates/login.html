@@ -256,11 +256,24 @@
 
         // Check if already logged in
         document.addEventListener('DOMContentLoaded', function() {
-            const token = localStorage.getItem('token');
-            if (token) {
-                window.location.href = '/';
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        
+        // Chỉ redirect nếu có cả token và user
+        if (token && user) {
+            try {
+                JSON.parse(user); // Kiểm tra user data có hợp lệ không
+                // Có thể redirect về trang được yêu cầu trước đó
+                const redirectUrl = localStorage.getItem('redirectAfterLogin') || '/';
+                localStorage.removeItem('redirectAfterLogin');
+                window.location.href = redirectUrl;
+            } catch (e) {
+                // User data không hợp lệ, xóa và cho phép login
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
             }
-        });
+        }
+    });
 
         // Handle login
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
